@@ -12,7 +12,7 @@
 </div>
 </template>
 
-
+ 
 <script>
 import EmptyLayout from './views/layouts/EmptyLayout';
 import MainLayout from './views/layouts/MainLayout';
