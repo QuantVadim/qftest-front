@@ -1,6 +1,6 @@
 <template>
   <div v-if="error == false">
-    <div v-if="group && group?.closed == 0" @mousedown="saveScroll">
+    <div v-if="group != undefined && group?.closed == 0" @mousedown="saveScroll">
       <it-toggle
         v-if="this.group.usr_id == this.$store.state.ME.data.usr_id"
         v-model="tab"
