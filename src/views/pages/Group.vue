@@ -9,7 +9,7 @@
       <div v-if="tab == 'Группа'">
         <block style="margin-top: 60px">
           <div style="color: gray; margin-left: 6px">
-            {{ group.count_users }} ч.
+            {{ group.count_users }} ч. 
           </div>
           <div class="group-header-image-wrapper">
             <div class="group-image-wrapper-center">
