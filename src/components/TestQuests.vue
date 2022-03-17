@@ -38,7 +38,7 @@
     <Button @click="addCard('Simple')" label="Текст" class="p-button-outlined" />
     <Button @click="addCard('Choice')" label="Выбор" class="p-button-outlined" />
     <Button @click="addCard('Orthoepy')" label="Ударение" class="p-button-outlined" />
-    <Button @click="addCard('Folder')" label="Папка" class="p-button-outlined" />
+    <Button v-if="isFolder != true" @click="addCard('Folder')" label="Папка" class="p-button-outlined" />
     </span>
   </Block>
 
@@ -75,7 +75,7 @@ export default {
     ChoiceCard_editor, ChoiceCard_basic, ChoiceCard_result,
     OrthoepyCard_editor, OrthoepyCard_basic, OrthoepyCard_result
   },
-  props: ['data', 'mode'],
+  props: ['data', 'mode', 'isFolder'],
   data() {
     return {
       items: this.data || [],

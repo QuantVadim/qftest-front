@@ -495,7 +495,7 @@ export default {
   width: fit-content;
   margin: auto;
 }
-.p-sidebar {
+.win-result.p-sidebar {
   z-index: 9999999 !important;
 }
 .win-result.p-sidebar {
@@ -514,7 +514,5 @@ export default {
   margin: 0px;
   padding: 0px;
 }
-.p-sidebar-mask {
-  z-index: 999999 !important;
-}
+
 </style>

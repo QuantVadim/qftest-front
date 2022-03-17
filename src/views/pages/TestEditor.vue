@@ -45,21 +45,26 @@
         <h3 style="margin: 0px">Выбор изображения</h3>
       </template>
       <template #body>
-        <ImageSelector @select="SelectImage" @close="isImageSelector = false" img-type='ico' />
+        <ImageSelector
+          @select="SelectImage"
+          @close="isImageSelector = false"
+          img-type="ico"
+        />
       </template>
       <template #actions>
         <it-button @click="isImageSelector = false">Отмена</it-button>
         <!-- <it-button :loading="isDeletingGTest" @click="DeleteGTest" type="danger">Удалить</it-button> -->
       </template>
     </it-modal>
-    <Sidebar
-      v-model:visible="isFolder"
-      position="bottom"
-      class="win-result"
-    >
+    <Sidebar v-model:visible="isFolder" position="bottom" class="win-folder">
       <div class="sidebar-conent-center">
         <main class="main">
-          <TestQuests :data="folder?.body" :mode="'editor'" @change-list="SetBodyFolder" />
+          <TestQuests
+            :data="folder?.body"
+            :mode="'editor'"
+            :is-folder="true"
+            @change-list="SetBodyFolder"
+          />
         </main>
       </div>
     </Sidebar>
@@ -113,16 +118,22 @@ export default {
         me: this.$store.state.ME.data,
         test: this.test,
       };
-      this.axios.post(this.apiurl, obj).then((itm) => {
-        console.log(itm.data);
-        if (itm.data?.data) {
-          let test_id = itm.data?.data;
-          this.$router.replace({ path: `/test/${test_id}/editor` });
-          this.$success("Сохранение теста", "Тест был успешно сохранен");
-        }
-      }).catch(()=>{
-        this.$error("Ошибка сохранения теста", "При сохранении теста поизошла ошибка");
-      });
+      this.axios
+        .post(this.apiurl, obj)
+        .then((itm) => {
+          console.log(itm.data);
+          if (itm.data?.data) {
+            let test_id = itm.data?.data;
+            this.$router.replace({ path: `/test/${test_id}/editor` });
+            this.$success("Сохранение теста", "Тест был успешно сохранен");
+          }
+        })
+        .catch(() => {
+          this.$error(
+            "Ошибка сохранения теста",
+            "При сохранении теста поизошла ошибка"
+          );
+        });
     },
     SelectImage(img) {
       if (this.test != undefined) {
@@ -130,37 +141,38 @@ export default {
         this.test.ico = img.img_id;
       }
     },
-    SetBody(items){
-      if(this.test?.body){
+    SetBody(items) {
+      if (this.test?.body) {
         this.test.body = items;
       }
-        
     },
-    SetBodyFolder(items){
-      if(this?.folder){
+    SetBodyFolder(items) {
+      if (this?.folder) {
         this.folder.body = items;
       }
       console.log(items);
-    }
+    },
   },
   watch: {
-    'isFolder'(newV){
-      if(!newV && this.$route.query?.folder){
+    isFolder(newV) {
+      if (!newV && this.$route.query?.folder) {
         this.$router.go(-1);
       }
       return this.isFolder;
     },
-    '$route.query': function(){
-      if(this.$route.query?.folder){
-        let fld = this?.test.body.filter((item)=>{return item.id == this.$route.query?.folder && item.type == 'Folder'});
-        if(fld.length == 1){
+    "$route.query": function () {
+      if (this.$route.query?.folder) {
+        let fld = this?.test.body.filter((item) => {
+          return item.id == this.$route.query?.folder && item.type == "Folder";
+        });
+        if (fld.length == 1) {
           this.folder = fld[0];
           this.isFolder = true;
-        }else{
+        } else {
           this.folder = undefined;
           this.isFolder = false;
         }
-      }else{
+      } else {
         this.folder = undefined;
         this.isFolder = false;
       }
@@ -196,7 +208,7 @@ export default {
 </script>
 
 <style>
-.test-header-wrapper .content{
+.test-header-wrapper .content {
   display: grid;
   grid-template-columns: 110px 1fr;
 }
@@ -204,17 +216,16 @@ textarea.it-textarea {
   overflow: hidden !important;
 }
 
-
-.win-result.p-sidebar {
+.win-folder.p-sidebar {
   height: 100vh !important;
   background-color: rgb(206, 206, 206);
 }
-.win-result .p-sidebar-header {
+.win-folder .p-sidebar-header {
   box-shadow: 0px 8px 8px #cecece;
   z-index: 1;
 }
-.win-result .p-sidebar-header::before{
-  content: 'Папка';
+.win-folder .p-sidebar-header::before {
+  content: "Папка";
   font-size: 22px;
   background-color: white;
   padding: 6px;
@@ -222,12 +233,24 @@ textarea.it-textarea {
   border-radius: 6px;
   position: absolute;
   left: 10px;
+  width: calc(100% - 106px);
+  padding-left: 52px;
+  background-image: url("/img/ico-folder.png");
+  background-position: 6px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  border-right: 4px solid white;
+  height: 32px;
+  line-height: 32px;
+  padding-right: 30px;
+  word-break: break-all;
 }
-.win-result .sidebar-conent-center {
+.win-folder .sidebar-conent-center {
   max-width: 700px;
   margin: auto;
 }
-.win-result .p-sidebar-content {
+.win-folder .p-sidebar-content {
   margin: 0px;
   padding: 0px;
 }

@@ -333,4 +333,15 @@ height: 40px;
   margin-top: -124px;
   width: 70px;
   height: 124px;
-  }
+}
+
+.p-sidebar-close{
+  z-index: 1;
+}
+.choice-image-panel._top .it-btn{
+  display: none;
+}
+.editing-choice .choice-image-panel._top .it-btn{
+  animation: show 0.2s;
+  display: flex;
+}
