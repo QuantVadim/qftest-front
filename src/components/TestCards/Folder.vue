@@ -3,7 +3,7 @@
   <div v-if="dt != undefined">
     <it-input v-model="dt.name" />
     <it-button @click="Open">Открыть</it-button>
-    <div> Кол-во: {{ body?.length }} шт. </div>
+    <div> Кол-во: {{ dt?.body?.length || 0 }} шт. </div>
   </div>
   <div v-else>Пусто</div>
 </div>
@@ -17,7 +17,6 @@ export default {
   data(){
     return{
       dt: this?.data,
-      body: [],
     }
   },
   methods:{
@@ -29,9 +28,6 @@ export default {
     UpdateList(){
       this.$emit('changeList', this.items);
     },
-    SetBody(items){
-      this.body = items;
-    }
   },
   setup() {
     

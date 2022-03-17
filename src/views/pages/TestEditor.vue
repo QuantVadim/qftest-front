@@ -56,7 +56,7 @@
         <!-- <it-button :loading="isDeletingGTest" @click="DeleteGTest" type="danger">Удалить</it-button> -->
       </template>
     </it-modal>
-    <Sidebar v-model:visible="isFolder" position="bottom" class="win-folder">
+    <Sidebar ref="winFolder" v-model:visible="isFolder" position="bottom" class="win-folder">
       <div class="sidebar-conent-center">
         <main class="main">
           <TestQuests
@@ -158,6 +158,12 @@ export default {
       if (!newV && this.$route.query?.folder) {
         this.$router.go(-1);
       }
+      if(newV){
+        setTimeout(()=>{
+            let headerFolder = document.querySelector(".win-folder .p-sidebar-header");
+            headerFolder.style.setProperty("--folder-header", '"'+this.folder.name+'"' ); 
+          }, 0);
+      }
       return this.isFolder;
     },
     "$route.query": function () {
@@ -221,11 +227,12 @@ textarea.it-textarea {
   background-color: rgb(206, 206, 206);
 }
 .win-folder .p-sidebar-header {
+  --folder-header: "Новая папка";
   box-shadow: 0px 8px 8px #cecece;
   z-index: 1;
 }
 .win-folder .p-sidebar-header::before {
-  content: "Папка";
+  content: var(--folder-header, "Папка");
   font-size: 22px;
   background-color: white;
   padding: 6px;
@@ -235,7 +242,7 @@ textarea.it-textarea {
   left: 10px;
   width: calc(100% - 106px);
   padding-left: 52px;
-  background-image: url("/img/ico-folder.png");
+  background-image: var(--url-ico-folder);
   background-position: 6px;
   background-size: contain;
   background-repeat: no-repeat;
@@ -245,6 +252,7 @@ textarea.it-textarea {
   line-height: 32px;
   padding-right: 30px;
   word-break: break-all;
+  text-align: center;
 }
 .win-folder .sidebar-conent-center {
   max-width: 700px;

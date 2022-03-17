@@ -18,7 +18,9 @@ import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import ConfirmationService from 'primevue/confirmationservice';
 
+import '@/others/styles/vars.css'
 import '@/others/styles/style.css'
+
 
 //import 'primevue/resources/themes/lara-light-indigo/theme.css';
 
