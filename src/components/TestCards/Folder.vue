@@ -6,9 +6,8 @@
         <div class="__folder-img"></div>
         <div class="__count-cards"> {{ dt?.body?.length || 0 }} шт.</div>
       </div>
-      <div class="part-2">
-        <it-input v-model="dt.name" />
-        <InputText type="text" v-model="name" />
+      <div class="part-2 ">
+        <InputText class="p-input-wide" type="text" v-model="dt.name" />
       </div>
     
   </div>
@@ -17,10 +16,10 @@
 </template>
 
 <script>
-import InputText from 'primevue/inputtext';
+
 
 export default {
-  components: [InputText],
+  components: [],
   props: ['data'],
   data(){
     return{

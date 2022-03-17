@@ -12,6 +12,9 @@
     border-radius: 12px;
   }
 }
+.p-input-wide{
+width: 100%;
+}
 
 .navigator-bottom-root{
   position: absolute;

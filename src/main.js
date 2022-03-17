@@ -16,6 +16,7 @@ import locale from "@/utils/ru.primevue.js";//Русский язык для pri
 import Block from './components/Block';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import InputText from 'primevue/inputtext';
 import ConfirmationService from 'primevue/confirmationservice';
 
 import '@/others/styles/vars.css'
@@ -28,6 +29,7 @@ let Vue = createApp(App);
 Vue.component('block', Block)
 Vue.component('p-button', Button)
 Vue.component('p-checkbox', Checkbox)
+Vue.component('InputText', InputText)
 
 Vue.use(store)
 .use(router)
