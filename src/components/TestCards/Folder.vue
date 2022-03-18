@@ -8,6 +8,24 @@
       </div>
       <div class="part-2 ">
         <InputText class="p-input-wide" type="text" v-model="dt.name" />
+        <div style="margin-top: 4px" v-if="dt?.props">
+          <span>
+          <p-button type="button" label="" icon="pi pi-cog" class="p-button-secondary p-button-outlined p-button-sm" @click="toggleFolderSettings" />
+          <OverlayPanel ref="settings">
+            <div>
+              <div class="field-checkbox">
+                <p-checkbox :id="'folderchb_'+dt.id" v-model="dt.props.isShuffle" :binary="true" />
+                <label :for="'folderchb_'+dt.id"> Перемешать и выбрать</label>
+              </div>
+              <div style="margin-top:4px" v-if="dt.props.isShuffle">
+                <InputNumber id="vertical" v-model="dt.props.select"  mode="decimal" showButtons buttonLayout="horizontal" inputStyle="width:50px" :min="0" :max="dt?.body?.length || 0"
+                decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
+              </div>
+            </div>
+          </OverlayPanel>
+          </span>
+          <span v-if="dt.props.isShuffle" class="__selected-cards-info"> Выбрано: {{dt.props.select}} шт.</span>
+        </div>
       </div>
     
   </div>
@@ -28,6 +46,9 @@ export default {
     }
   },
   methods:{
+    toggleFolderSettings(event){
+      this.$refs.settings.toggle(event)
+    },
     Open(){
       if(this?.dt?.id){
         this.$router.push({query: {folder: this.dt.id}});
@@ -37,13 +58,22 @@ export default {
       this.$emit('changeList', this.items);
     },
   },
-  setup() {
-    
+  mounted() {
+    if(this.dt?.props == undefined){ 
+      this.dt.props = {
+        isShuffle: false,
+        select: 0    
+      };
+    }
   },
 }
 </script>
 
 <style scoped>
+.folder-content .__selected-cards-info{
+  line-height: 34px; 
+  color: gray
+}
 
 .folder-content{
   display: grid;
