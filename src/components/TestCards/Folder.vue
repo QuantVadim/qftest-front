@@ -50,9 +50,7 @@ export default {
       this.$refs.settings.toggle(event)
     },
     Open(){
-      if(this?.dt?.id){
-        this.$router.push({query: {folder: this.dt.id}});
-      }
+      this.$emit('open-folder', this.dt.id);
     },
     UpdateList(){
       this.$emit('changeList', this.items);
