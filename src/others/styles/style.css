@@ -107,11 +107,11 @@ width: 100%;
 .choice-body .it-radio-border{
   background-color: white;
 }
-.choice-body .it-radio-border{
-  background-color: white;
-}
 .wrapper-choice[type="danger"] .it-radio-wrapper--danger--checked .it-radio-border{
   background-color: #F83155;
+}
+.wrapper-choice[type="success"] .choice-body._selected .it-radio-wrapper--success--checked .it-radio-border{
+  background-color: #07d85b;
 }
 .choice-body .it-radio-wrapper--primary--checked .it-radio-border{
   background-color: #3051ff;
