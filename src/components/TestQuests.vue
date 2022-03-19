@@ -28,12 +28,12 @@
 >
   <template #item="{ index }">
     <block :class="{'_selected-card': SelectMode.selected.includes(items[index].id) }">
-    <div v-if="mode == 'editor'" class="handle-card" :class="{'handle-card-center_draggable': SelectMode.enable == false }">
+    <div v-if="mode == 'editor'" class="handle-card" :card-id="items[index].id">
       <div>
         <it-icon v-if="SelectMode.enable == false" @click="deleteCard(index)" name="delete" size="32px" />
-        <p-checkbox class="__card-check-box" v-else :name="'card-check_'+items[index].id" :value="items[index].id" v-model="SelectMode.selected" />
+        <p-checkbox @click="CheckSelectCount" class="__card-check-box" v-else :name="'card-check_'+items[index].id" :value="items[index].id" v-model="SelectMode.selected" />
       </div>
-      <div @click="ClickHandleCard" class="handle-card-center">{{ index+1 }}</div>
+      <div @click="ClickHandleCard" class="handle-card-center" :class="{'handle-card-center_draggable': SelectMode.enable == false }">{{ index+1 }}</div>
       <div class="handle-part-right">
         <it-icon @click="DublicateCard(index)" name="content_copy" />
         <it-icon name="more_horiz" @click="toggle" />
@@ -104,13 +104,17 @@ export default {
         enable: false,
         selected: [],
         mode: '', //to-folder
+        lastClick: undefined,
+        shiftLastClick: undefined,
       },
+      lastCardIdMenu: undefined, //id карточки, которой открывали меню действий в последний раз
       itemsMenu: [
         {
 					label: 'Выбрать',
 					icon: 'pi pi-check-square',
 					command: () => {
             this.SelectMode.enable = true;
+            setTimeout(()=>{this.SelectCardId(this.lastCardIdMenu);}, 0);
 					}
 				},
       ],
@@ -118,9 +122,18 @@ export default {
     };
   },
   watch:{
-    'SelectMode.enable'(){
+    'SelectMode.enable'(val){
         this.SelectMode.selected = [];
         this.SelectMode.mode = '';
+        this.SelectMode.lastClick = undefined;
+        this.SelectMode.shiftLastClick = undefined;
+        if(val){
+          setTimeout(()=>{
+            if(this.lastCardIdMenu != undefined && this.SelectMode.selected.includes(this.lastCardIdMenu)){
+              this.SelectMode.lastClick = this.lastCardIdMenu; 
+            }
+          }, 0)
+        }
     }
   },
   methods: {
@@ -149,9 +162,22 @@ export default {
     },
     toggle(event) {
       this.$refs.menu.toggle(event);
+      let handle = event.target.parentElement.parentElement;
+      if(handle.classList.contains('handle-card')){
+        this.lastCardIdMenu = handle.getAttribute('card-id');
+      }
     },
     toggleSelectMenu(event) {
       this.$refs.selectMenu.toggle(event);
+    },
+    SelectCardId(id){
+      if(this.SelectMode.enable){
+        if(this.items.filter(item=>item.id == id).length == 1 &&
+          this.SelectMode.selected.includes(id) == false
+        ){
+          this.SelectMode.selected.push(id);
+        }
+      }
     },
     showinfo(){
       console.log(this.items);
@@ -174,6 +200,13 @@ export default {
     deleteCard(index){
       this.items.splice(index, 1);
     },
+    CheckSelectCount(){
+      setTimeout(()=>{
+        if(this.SelectMode.selected.length == 0){
+          this.SelectMode.enable = false;
+        }
+      },0)
+    },
     DublicateCard(index){
       let card =  JSON.parse(JSON.stringify(this.items[index]));
       if(card.type == "Folder"){ // Присваивание новых id карточкам папки
@@ -188,8 +221,71 @@ export default {
       if(this.SelectMode.enable){
         let handleCard = event.target.parentElement;
         if(handleCard.classList.contains('handle-card')){
+          if(event.shiftKey){
+             this.SelectMode.shiftLastClick = handleCard.getAttribute('card-id');
+             setTimeout(()=>{
+               let val = this.SelectMode.selected.includes(this.SelectMode.shiftLastClick);
+               this.SelectRange(this.SelectMode.lastClick, this.SelectMode.shiftLastClick, val);
+             }, 0);
+          }else{
+            this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+          }
           let checkboxCard = handleCard.querySelector(".p-checkbox input");
           checkboxCard.click();
+        }
+      }else{
+        if(event.ctrlKey){
+          this.SelectMode.enable = true;
+          setTimeout(()=>{
+            let handleCard = event.target.parentElement;
+            if(handleCard.classList.contains('handle-card')){
+              this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+              let checkboxCard = handleCard.querySelector(".p-checkbox input");
+              checkboxCard.click();
+            }
+          }, 0);
+        }
+      }
+      document.getSelection().removeAllRanges();
+    },
+    SelectRange(first, last, val){//устанавливает чекбоксы в диапазоне в положение val(Булево). first, last - id карточек
+      let range = [];
+      let counter = 0;
+      let topToDown = false;
+      for (let i = 0; i < this.items.length; i++) {
+        const el = this.items[i];
+        if(el.id == first || el.id == last){
+          counter++;
+          if(counter == 1 && el.id == first) topToDown = true;
+        }
+        if(counter == 1){
+          if(!topToDown && el.id != last) range.push(el.id);
+          else if(topToDown && el.id != first) range.push(el.id);
+        }
+        if(counter == 2) break;
+      }
+      if(counter == 2){
+        if(val){
+          let rear = range.filter(item => this.SelectMode.selected.includes(item) == false);
+          this.SelectMode.selected.push.apply(this.SelectMode.selected, rear);
+        }else{
+          let rear = range.filter(item => this.SelectMode.selected.includes(item) == true);
+          let ct = this.SelectMode.selected.length-1;
+          for (let i = ct; i >= 0 ; i--) {
+            const el = this.SelectMode.selected[i];
+            if(rear.includes(el)){
+              this.SelectMode.selected.splice(i, 1);
+            }
+          }
+        }
+        let firstCardState = this.SelectMode.selected.includes(first);
+        if(firstCardState != val){
+          if(val){
+            this.SelectMode.selected.push(first);
+          }else{
+            let indexFirstCardSelected = this.SelectMode.selected.indexOf(first);
+            this.SelectMode.selected.splice(indexFirstCardSelected, 1);
+          }
         }
       }
     },
@@ -224,7 +320,7 @@ export default {
           this.items.splice(i, 1);
         }
       }
-    }, 
+    },
     RemoveFromFolder(folderId, selected){
       let cards = [];
       let index;
