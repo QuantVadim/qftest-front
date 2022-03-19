@@ -22,7 +22,7 @@
           ></it-textarea>
         </div>
       </block>
-      <TestQuests :data="test.body" :mode="'editor'" @change-list="SetBody" />
+      <TestQuests ref="parentTestBody" :data="test.body" :mode="'editor'" @change-list="SetBody" />
       <block>
         <it-button block @click="SaveTest">Сохранить</it-button>
       </block>
@@ -63,6 +63,8 @@
             :data="folder?.body"
             :mode="'editor'"
             :is-folder="true"
+            :folder-id="folder?.id"
+            @remove-from-folder="RemoveFromFolder"
             @change-list="SetBodyFolder"
           />
         </main>
@@ -152,6 +154,10 @@ export default {
       }
       console.log(items);
     },
+    RemoveFromFolder(folderId, selected){
+      this.$refs.parentTestBody.RemoveFromFolder(folderId, selected);
+      this.isFolder = false;
+    }
   },
   watch: {
     isFolder(newV) {

@@ -63,6 +63,9 @@ export default {
         select: 0    
       };
     }
+    if(this.dt?.body == undefined){
+      this.dt.body = [];
+    }
   },
 }
 </script>

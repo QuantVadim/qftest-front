@@ -95,7 +95,7 @@ export default {
     ChoiceCard_editor, ChoiceCard_basic, ChoiceCard_result,
     OrthoepyCard_editor, OrthoepyCard_basic, OrthoepyCard_result
   },
-  props: ['data', 'mode', 'isFolder'],
+  props: ['data', 'mode', 'isFolder', 'folderId'],
   data() {
     return {
       items: this.data || [],
@@ -224,7 +224,31 @@ export default {
           this.items.splice(i, 1);
         }
       }
-    }
+    }, 
+    RemoveFromFolder(folderId, selected){
+      let cards = [];
+      let index;
+      for (let i = 0; i < this.items.length; i++) {
+        const el = this.items[i];
+        if(el.id == folderId && el.type == "Folder"){
+          cards = el.body.filter(item => selected.includes(item.id))
+          index = i;
+          break;
+        }
+      }
+      let count = this.items[index].body.length-1;
+      for (let i = count; i >= 0; i--) {
+        const el = this.items[index].body[i];
+        if(selected.includes(el.id)){
+          this.items[index].body.splice(i, 1);
+        }
+      }
+      this.SelectMode.enable = true;
+      setTimeout(()=>{
+        this.items.splice(index+1, 0, ...cards);
+        this.SelectMode.selected = selected;
+      }, 0);
+    },
   },
   mounted(){
     if(this.isFolder){
@@ -233,7 +257,7 @@ export default {
           label: 'Убрать из папки',
 					icon: 'pi pi-reply',
 					command: () => {
-            
+            this.$emit('remove-from-folder', this.folderId, this.SelectMode.selected);
 					}
         }
       ];

@@ -187,9 +187,9 @@ export default {
     this.isCover = props?.cover != undefined ? props?.cover : true;
     this.curAspect = props?.aspect || 'a1_1';
     this.curSize = props?.size || 'normal';
-
+    
     this.CheckChoices();
-    console.log(this.dt);
+  
   },
   methods: {
     toggleImgSettings(event) {
