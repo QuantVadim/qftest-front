@@ -3,7 +3,7 @@
 <div v-if="SelectMode.enable" class="select-panel wide-content-mode">
 <div class="header-content main-center">
   <div>
-    <span class="inline-block"><it-icon class="inline-block" name="select_all" color="white" style="font-size: 32px; margin-top: -4px" outlined /></span>
+    <span class="inline-block"><it-icon class="inline-block" name="checklist" color="white" style="font-size: 32px; margin-top: -4px" outlined /></span>
     <span class="inline-block">Выбрано: {{SelectMode.selected.length}}</span>
     <Button v-if="SelectMode.selected.length > 0" @click="toggleSelectMenu" icon="pi pi-chevron-down" class="p-button-rounded p-button-text" style="color: white;" />
       <span>
@@ -62,7 +62,40 @@
     </span>
   </Block>
 
-
+  <!-- Диалог удаление карточек -->
+  <it-modal v-model="confirmDeleteCardsModal">
+    <template #header>
+      <h3 style="margin: 10px 0px;">Удаление карточек</h3>
+    </template>
+    <template #body>
+      Вы уверены, что хотите удалить выбранные карточки?
+    </template>
+    <template #actions>
+      <it-button @click="confirmDeleteCardsModal = false">Отмена</it-button>
+      <it-button
+        type="danger"
+        @click="ConfirmDeleteCards">Удалить
+      </it-button>
+    </template>
+  </it-modal>
+ <!-- /Диалог удаление карточек -->
+ <!-- Диалог Перемещения карточек -->
+  <it-modal v-model="moveCardsDialog">
+    <template #header>
+      <h3 style="margin: 10px 0px;">Перенос карточек</h3>
+    </template>
+    <template #body>
+      <div style="text-align: center">Куда следует расположить карточки?</div>
+      <div style="text-align: center; margin-top: 10px">
+        <div @click="MoveCards(0)" style="display: grid"><Button label="До" class="p-button-outlined p-button-secondary" /></div>
+        <div @click="MoveCards(1)" style="margin-top: 6px; display: grid;"><Button label="После" class="p-button-outlined p-button-secondary" /></div>
+      </div>
+    </template>
+    <template #actions>
+      <it-button @click="moveCardsDialog = false">Отмена</it-button>
+    </template>
+  </it-modal>
+ <!-- /Диалог Перемещения карточек -->
 </div>
 </template>
 
@@ -103,10 +136,13 @@ export default {
       SelectMode: {
         enable: false,
         selected: [],
-        mode: '', //to-folder
+        mode: '', //to-folder, move
         lastClick: undefined,
+        moveCardId: undefined,
         shiftLastClick: undefined,
       },
+      confirmDeleteCardsModal: false,
+      moveCardsDialog: false,
       lastCardIdMenu: undefined, //id карточки, которой открывали меню действий в последний раз
       itemsMenu: [
         {
@@ -127,6 +163,7 @@ export default {
         this.SelectMode.mode = '';
         this.SelectMode.lastClick = undefined;
         this.SelectMode.shiftLastClick = undefined;
+        this.SelectMode.moveCardId = undefined;
         if(val){
           setTimeout(()=>{
             if(this.lastCardIdMenu != undefined && this.SelectMode.selected.includes(this.lastCardIdMenu)){
@@ -221,17 +258,25 @@ export default {
       if(this.SelectMode.enable){
         let handleCard = event.target.parentElement;
         if(handleCard.classList.contains('handle-card')){
-          if(event.shiftKey){
-             this.SelectMode.shiftLastClick = handleCard.getAttribute('card-id');
-             setTimeout(()=>{
-               let val = this.SelectMode.selected.includes(this.SelectMode.shiftLastClick);
-               this.SelectRange(this.SelectMode.lastClick, this.SelectMode.shiftLastClick, val);
-             }, 0);
+          if(this.SelectMode.mode != "move"){
+            if(event.shiftKey){
+              this.SelectMode.shiftLastClick = handleCard.getAttribute('card-id');
+              setTimeout(()=>{
+                let val = this.SelectMode.selected.includes(this.SelectMode.shiftLastClick);
+                this.SelectRange(this.SelectMode.lastClick, this.SelectMode.shiftLastClick, val);
+              }, 0);
+            }else{
+              this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+            }
+            let checkboxCard = handleCard.querySelector(".p-checkbox input");
+            checkboxCard.click();
           }else{
-            this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+            let cardId = handleCard.getAttribute('card-id');
+            if(this.SelectMode.selected.includes(cardId) == false){
+              this.SelectMode.moveCardId = cardId;
+              this.moveCardsDialog = true;
+            }
           }
-          let checkboxCard = handleCard.querySelector(".p-checkbox input");
-          checkboxCard.click();
         }
       }else{
         if(event.ctrlKey){
@@ -247,6 +292,24 @@ export default {
         }
       }
       document.getSelection().removeAllRanges();
+    },
+    MoveCards(offset){
+      let cardId = this.SelectMode.moveCardId;
+      if( cardId != undefined && this.SelectMode.selected.includes(cardId) == false ){
+        let cards = this.GetSelectedItems();
+        this.DeleteSelectedCards();
+        setTimeout(()=>{
+          for (let i = 0; i < this.items.length; i++) {
+            const el = this.items[i];
+            if(el.id == cardId){
+              this.items.splice(i+offset, 0, ...cards);
+              break;
+            }
+          }
+          this.moveCardsDialog = false;
+          this.SelectMode.mode = '';
+        },0);
+      }
     },
     SelectRange(first, last, val){//устанавливает чекбоксы в диапазоне в положение val(Булево). first, last - id карточек
       let range = [];
@@ -345,6 +408,19 @@ export default {
         this.SelectMode.selected = selected;
       }, 0);
     },
+    ConfirmDeleteCards(){
+      let count = this.items.length-1;
+      for (let i = count; i >= 0 ; i--) {
+        const el = this.items[i];
+        if(this.SelectMode.selected.includes(el.id)){
+          this.items.splice(i, 1);
+          let dlid = this.SelectMode.selected.indexOf(el.id);
+          this.SelectMode.selected.splice(dlid, 1);
+        }
+      }
+      this.confirmDeleteCardsModal = false;
+      this.CheckSelectCount();
+    }, 
   },
   mounted(){
     if(this.isFolder){
@@ -355,7 +431,21 @@ export default {
 					command: () => {
             this.$emit('remove-from-folder', this.folderId, this.SelectMode.selected);
 					}
-        }
+        },
+        {
+          label: 'Переместить',
+					icon: 'pi pi-sort',
+					command: () => {
+            this.SelectMode.mode = "move";
+					}
+        },
+        {
+          label: 'Удалить',
+					icon: 'pi pi pi-trash',
+					command: () => {
+            this.confirmDeleteCardsModal = true;
+					}
+        },
       ];
     }else{
       this.selectMenu = [
@@ -365,7 +455,21 @@ export default {
 					command: () => {
             this.SelectMode.mode = "to-folder";
 					}
-        }
+        },
+        {
+          label: 'Переместить',
+					icon: 'pi pi-sort',
+					command: () => {
+            this.SelectMode.mode = "move";
+					}
+        },
+        {
+          label: 'Удалить',
+					icon: 'pi pi pi-trash',
+					command: () => {
+            this.confirmDeleteCardsModal = true;
+					}
+        },
       ];
     }
   }
@@ -380,6 +484,13 @@ export default {
 .select-mode_to-folder ._selected-card .inner-card .folder-content .part-1{
   opacity: 0.5;
   animation: none;
+}
+
+.select-mode_move .block{
+  filter: none;
+}
+.select-mode_move .block._selected-card{
+  filter: brightness(0.7);
 }
 </style>
 
