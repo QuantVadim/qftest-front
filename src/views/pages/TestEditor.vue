@@ -60,6 +60,7 @@
       <div class="sidebar-conent-center">
         <main class="main">
           <TestQuests
+            ref="folderTestBody"
             :data="folder?.body"
             :mode="'editor'"
             :is-folder="true"
@@ -111,6 +112,11 @@ export default {
     };
   },
   beforeRouteLeave() {
+    if(this.$refs?.parentTestBody?.IsSelectMode()){
+      this.$refs.parentTestBody.SelectModeEnable(false);
+      return false;
+    }
+
     return confirm("Вы уверены, что хотите уйти?");
   },
   methods: {
@@ -172,7 +178,7 @@ export default {
       }
       return this.isFolder;
     },
-    "$route.query": function () {
+    "$route.query": function (/*newVal, oldVal*/) {
       if (this.$route.query?.folder) {
         let fld = this?.test.body.filter((item) => {
           return item.id == this.$route.query?.folder && item.type == "Folder";
@@ -185,8 +191,13 @@ export default {
           this.isFolder = false;
         }
       } else {
-        this.folder = undefined;
-        this.isFolder = false;
+        if(this.$refs?.folderTestBody?.IsSelectMode()){
+          this.$refs.folderTestBody.SelectModeEnable(false);
+          this.$router.forward();
+        }else{
+          this.folder = undefined;
+          this.isFolder = false;
+        }
       }
       return this.$route.query;
     },

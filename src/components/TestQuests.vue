@@ -1,18 +1,18 @@
 <template>
 <div :class="'select-mode_'+SelectMode.mode">
-<div v-if="SelectMode.enable" class="select-panel wide-content-mode">
+<div v-if="SelectMode.enable" class="select-panel wide-content-mode" :class="{_folder: isFolder}">
 <div class="header-content main-center">
   <div>
-    <span class="inline-block"><it-icon class="inline-block" name="checklist" color="white" style="font-size: 32px; margin-top: -4px" outlined /></span>
-    <span class="inline-block">Выбрано: {{SelectMode.selected.length}}</span>
+    <span class="inline-block"><it-icon class="inline-block" name="highlight_alt" color="white" style="font-size: 32px; margin-top: -4px" outlined /></span>
+    <span class="inline-block" style="margin-left: 5px">Выбрано: {{SelectMode.selected.length}}</span>
     <Button v-if="SelectMode.selected.length > 0" @click="toggleSelectMenu" icon="pi pi-chevron-down" class="p-button-rounded p-button-text" style="color: white;" />
       <span>
          <Menu ref="selectMenu" :model="selectMenu" :popup="true" />
       </span>
   </div>
   <div></div>
-  <div>
-    <Button label="Отмена" @click="SelectMode.enable = false" class="p-button-outlined" style="color: white"/>
+  <div style="padding-right: 4px">
+    <Button label="" icon="pi pi-times" @click="SelectMode.enable = false" class="p-button-rounded p-button-text" style="color: white"/>
   </div>
 </div>
 </div>
@@ -174,6 +174,17 @@ export default {
     }
   },
   methods: {
+    SelectModeEnable(val){
+      if(this.SelectMode != undefined){
+        this.SelectMode.enable = val;
+      }
+    },
+    IsSelectMode(){
+      if(this?.SelectMode){
+        return this.SelectMode.enable;
+      }
+      return false;
+    },
     OpenFolder(id){
       if(this.SelectMode.enable == false){
         this.$router.push({query: {folder: id}});
@@ -512,6 +523,11 @@ export default {
   height: 42px;
   line-height: 40px;
   background-color: #385894;
+  animation: show-enter 0.2s;
+}
+.select-panel._folder{
+  height: 52px;
+  line-height: 46px;
 }
 
 .select-panel .inline-block{
