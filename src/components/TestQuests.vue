@@ -1,5 +1,5 @@
 <template>
-<div :class="'select-mode_'+SelectMode.mode">
+<div :class="['select-mode_'+SelectMode.mode, {'select-mode-enable': SelectMode.enable}]">
 <div v-if="SelectMode.enable" class="select-panel wide-content-mode" :class="{_folder: isFolder}">
 <div class="header-content main-center">
   <div>
@@ -27,7 +27,9 @@
   @change="UpdateList"
 >
   <template #item="{ index }">
-    <block :class="{'_selected-card': SelectMode.selected.includes(items[index].id) }">
+    <block :ref="'card_'+items[index].id" 
+      @animationend="AnimateCard($refs['card_'+items[index].id], false)" 
+      :class="{'_selected-card': SelectMode.selected.includes(items[index].id) }">
     <div v-if="mode == 'editor'" class="handle-card" :card-id="items[index].id">
       <div>
         <it-icon v-if="SelectMode.enable == false" @click="deleteCard(index)" name="delete" size="32px" />
@@ -42,12 +44,14 @@
         </div>
       </div>
     </div>
-    <div class="inner-card">
-    <component 
+    <div class="wrapper-inner-card" @click="ClickCardBody">
+      <div class="inner-card">
+      <component 
       :is="items[index].type.toLowerCase()+'Card_'+mode" 
       :data="items[index]" 
       @open-folder="OpenFolder" 
-    />
+      />
+      </div>
     </div>
     </block>
   </template>
@@ -174,6 +178,16 @@ export default {
     }
   },
   methods: {
+    AnimateCard(card, val){
+      console.log(card);
+      if(card?.$el){
+        card.$el.classList.toggle('test-body-card-click', val);
+      }
+    },
+    ClickCardBody(event){
+      if(this.SelectMode.enable)
+        this.ClickHandleCard(event);
+    },
     SelectModeEnable(val){
       if(this.SelectMode != undefined){
         this.SelectMode.enable = val;
@@ -211,19 +225,25 @@ export default {
     toggle(event) {
       this.$refs.menu.toggle(event);
       let handle = event.target.parentElement.parentElement;
+      console.log(handle);
       if(handle.classList.contains('handle-card')){
-        this.lastCardIdMenu = handle.getAttribute('card-id');
+        let cardID = handle.getAttribute('card-id').toString();
+        cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+        this.lastCardIdMenu = cardID;
       }
     },
     toggleSelectMenu(event) {
       this.$refs.selectMenu.toggle(event);
     },
     SelectCardId(id){
+      let cardID = id.toString();
+      cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
       if(this.SelectMode.enable){
-        if(this.items.filter(item=>item.id == id).length == 1 &&
-          this.SelectMode.selected.includes(id) == false
+        this.SelectMode.lastClick = cardID;
+        if(this.items.filter(item=>item.id == cardID).length == 1 &&
+          this.SelectMode.selected.includes(cardID) == false
         ){
-          this.SelectMode.selected.push(id);
+          this.SelectMode.selected.push(cardID);
         }
       }
     },
@@ -268,23 +288,27 @@ export default {
     ClickHandleCard(event){
       if(this.SelectMode.enable){
         let handleCard = event.target.parentElement;
+        if(handleCard.classList.contains('handle-card') == false){
+          handleCard = handleCard.querySelector('.handle-card');
+        }
         if(handleCard.classList.contains('handle-card')){
           if(this.SelectMode.mode != "move"){
+            let cardID = handleCard.getAttribute('card-id').toString();
+            cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
             if(event.shiftKey){
-              let cardID = handleCard.getAttribute('card-id').toString();
-              cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
               this.SelectMode.shiftLastClick = cardID;
               setTimeout(()=>{
                 let val = this.SelectMode.selected.includes(this.SelectMode.shiftLastClick);
                 this.SelectRange(this.SelectMode.lastClick, this.SelectMode.shiftLastClick, val);
               }, 0);
             }else{
-              let cardID = handleCard.getAttribute('card-id').toString();
-              cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
               this.SelectMode.lastClick = cardID;
             }
             let checkboxCard = handleCard.querySelector(".p-checkbox input");
             checkboxCard.click();
+            setTimeout(()=>{
+              this.AnimateCard(this.$refs['card_'+cardID], true);
+            });
           }else{
             let cardID = handleCard.getAttribute('card-id').toString();
             cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
@@ -292,6 +316,7 @@ export default {
               this.SelectMode.moveCardId = cardID;
               this.moveCardsDialog = true;
             }
+            this.AnimateCard(this.$refs['card_'+cardID], true);
           }
         }
       }else{
@@ -305,6 +330,7 @@ export default {
               this.SelectMode.lastClick = cardID;
               let checkboxCard = handleCard.querySelector(".p-checkbox input");
               checkboxCard.click();
+              this.AnimateCard(this.$refs['card_'+cardID.toString()], true);
             }
           }, 0);
         }
@@ -495,8 +521,16 @@ export default {
 </script>
 
 <style>
+.select-mode-enable .block:hover{
+  outline: 4px solid #2196f34d;;
+}
+
+.select-mode-enable .inner-card{
+  pointer-events: none;
+}
 .select-mode_to-folder .inner-card .folder-content .part-1{
   opacity: 1;
+  pointer-events: all;
   animation: scale-pulse 1s infinite;
 }
 .select-mode_to-folder ._selected-card .inner-card .folder-content .part-1{
