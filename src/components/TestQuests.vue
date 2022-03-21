@@ -271,20 +271,25 @@ export default {
         if(handleCard.classList.contains('handle-card')){
           if(this.SelectMode.mode != "move"){
             if(event.shiftKey){
-              this.SelectMode.shiftLastClick = handleCard.getAttribute('card-id');
+              let cardID = handleCard.getAttribute('card-id').toString();
+              cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+              this.SelectMode.shiftLastClick = cardID;
               setTimeout(()=>{
                 let val = this.SelectMode.selected.includes(this.SelectMode.shiftLastClick);
                 this.SelectRange(this.SelectMode.lastClick, this.SelectMode.shiftLastClick, val);
               }, 0);
             }else{
-              this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+              let cardID = handleCard.getAttribute('card-id').toString();
+              cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+              this.SelectMode.lastClick = cardID;
             }
             let checkboxCard = handleCard.querySelector(".p-checkbox input");
             checkboxCard.click();
           }else{
-            let cardId = handleCard.getAttribute('card-id');
-            if(this.SelectMode.selected.includes(cardId) == false){
-              this.SelectMode.moveCardId = cardId;
+            let cardID = handleCard.getAttribute('card-id').toString();
+            cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+            if(this.SelectMode.selected.includes(cardID) == false){
+              this.SelectMode.moveCardId = cardID;
               this.moveCardsDialog = true;
             }
           }
@@ -295,7 +300,9 @@ export default {
           setTimeout(()=>{
             let handleCard = event.target.parentElement;
             if(handleCard.classList.contains('handle-card')){
-              this.SelectMode.lastClick = handleCard.getAttribute('card-id');
+              let cardID = handleCard.getAttribute('card-id').toString();
+              cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+              this.SelectMode.lastClick = cardID;
               let checkboxCard = handleCard.querySelector(".p-checkbox input");
               checkboxCard.click();
             }
