@@ -111,13 +111,15 @@ export default {
       isFolder: false,
     };
   },
-  beforeRouteLeave() {
+  async beforeRouteLeave(next) {
     if(this.$refs?.parentTestBody?.IsSelectMode()){
       this.$refs.parentTestBody.SelectModeEnable(false);
-      return false;
+      next(false);
     }
-
-    return confirm("Вы уверены, что хотите уйти?");
+    
+    if(confirm("Вы уверены, что хотите уйти?") != true){
+      next(false);
+    }
   },
   methods: {
     SaveTest() {

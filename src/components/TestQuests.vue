@@ -182,9 +182,6 @@ export default {
     }
   },
   methods: {
-    onAddCard(event){
-      console.log(event)
-    },
     BtnDeleteCardById(id){ //Запуск анимации кдаления карточки
       let cardID = id.toString();
       if(this.$refs['card_'+cardID]){
@@ -194,7 +191,6 @@ export default {
       }
     },
     CardAnimationEnd(event){
-      console.log(event);
       switch (event.animationName) {
         case 'test-body-card-click--animation':
           event.target.classList.toggle('test-body-card-click', false);
@@ -229,13 +225,11 @@ export default {
       }else{
         arr = ids;
       }
-      console.log(arr);
       for (let i = 0; i < arr.length; i++) {
         const el = arr[i];
         const card = this.$refs['card_'+el];
         if(card){
           let block = card.querySelector('.block'); 
-          console.log(block.clientHeight);
           card.style.setProperty('--from-card-height', '0px');
           card.style.setProperty('--card-height', block.clientHeight+'px');
           card.classList.toggle('_card-enter', true);
@@ -244,7 +238,6 @@ export default {
 
     },
     AnimateCard(card, val){
-      console.log(card);
       if(card != undefined){
         card.classList.toggle('test-body-card-click', val);
       }
@@ -284,14 +277,12 @@ export default {
         }
       }
     },
-    UpdateList(event){
-      console.log(event);
-      this.$emit('changeList', this.items);
+    UpdateList(){
+      //this.$emit('changeList', this.items);
     },
     toggle(event) {
       this.$refs.menu.toggle(event);
       let handle = event.target.parentElement.parentElement;
-      console.log(handle);
       if(handle.classList.contains('handle-card')){
         let cardID = handle.getAttribute('card-id').toString();
         cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
@@ -608,7 +599,7 @@ export default {
 </script>
 
 <style>
-.select-mode-enable .block:hover{
+.select-mode-enable .block-card-wrapper:hover{
   outline: 4px solid #2196f34d;;
 }
 
@@ -690,11 +681,12 @@ export default {
   padding: 10px;
 }
 .block-card-wrapper{
-  margin: 8px 0px;
+  margin: 8px 8px;
+  border-radius: 8px;
 }
 .block {
   padding: 0px;
-  margin: 0px 8px;
+  margin: 0px 0px;
   overflow: hidden;
 }
 .block._tool-bar{
@@ -712,7 +704,9 @@ export default {
 .handle-card:hover {
   background-color: #b6cbf1;
   height: 30px;
-  
+}
+.select-mode-enable .handle-card:hover {
+  background-color: rgb(236, 236, 236);
 }
 .handle-card-center_draggable{
   cursor: move;
@@ -720,7 +714,7 @@ export default {
 .blue-background-class .handle-card {
   opacity: 0.4;
 }
-.blue-background-class {
-  background-color: #5589ec;
+.blue-background-class .block {
+  background-color: #a5c0f3;
 }
 </style>
