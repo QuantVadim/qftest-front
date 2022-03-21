@@ -125,6 +125,74 @@ width: 100%;
     transform: scale(1);
   }
 }
+
+@keyframes card-leave--animation{
+  0%{
+    transform: scale(1);
+    opacity: 1;
+    height: var( --card-height );
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  100%{
+    opacity: 0;
+    transform: scale(0.5);
+    height: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+
+@keyframes card-enter--animation{
+  0%{
+    opacity: 0;
+    transform: scale(0.5);
+    height: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  100%{
+    transform: scale(1);
+    opacity: 1;
+    height: var( --card-height, auto);
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+}
+.editor-mode .block-card-wrapper{
+  overflow: hidden;
+}
+/* .editor-mode .block._card-enter{
+  animation: card-enter--animation 0.2s;
+}
+.editor-mode .block._card-leave{
+  animation: card-leave--animation 0.2s;
+} */
+/* --- */
+.editor-mode .block-card-wrapper._card-enter{
+  animation: card-enter--animation 0.2s;
+}
+
+.editor-mode .block-card-wrapper._card-leave{
+  animation: card-leave--animation 0.2s;
+}
+/* --- */
+.editor-mode .block-card-wrapper._hide{
+  display: none;
+}
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active до версии 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
 .test-body-card-click{
   animation: test-body-card-click--animation 0.3s;
 }

@@ -1,5 +1,5 @@
 <template>
-<div :class="['select-mode_'+SelectMode.mode, {'select-mode-enable': SelectMode.enable}]">
+<div :class="['select-mode_'+SelectMode.mode, {'select-mode-enable': SelectMode.enable, 'editor-mode': mode == 'editor' }]">
 <div v-if="SelectMode.enable" class="select-panel wide-content-mode" :class="{_folder: isFolder}">
 <div class="header-content main-center">
   <div>
@@ -27,12 +27,15 @@
   @change="UpdateList"
 >
   <template #item="{ index }">
-    <block :ref="'card_'+items[index].id" 
-      @animationend="AnimateCard($refs['card_'+items[index].id], false)" 
+    <div :ref="'card_'+items[index].id" class="block-card-wrapper _card-stay"
+      :class="{'_selected-card': SelectMode.selected.includes(items[index].id) }"
+      @animationend="CardAnimationEnd">
+    <block 
+     
       :class="{'_selected-card': SelectMode.selected.includes(items[index].id) }">
     <div v-if="mode == 'editor'" class="handle-card" :card-id="items[index].id">
       <div>
-        <it-icon v-if="SelectMode.enable == false" @click="deleteCard(index)" name="delete" size="32px" />
+        <it-icon v-if="SelectMode.enable == false" @click="BtnDeleteCardById(items[index].id)" name="delete" size="32px" />
         <p-checkbox @click="CheckSelectCount" class="__card-check-box" v-else :name="'card-check_'+items[index].id" :value="items[index].id" v-model="SelectMode.selected" />
       </div>
       <div @click="ClickHandleCard" class="handle-card-center" :class="{'handle-card-center_draggable': SelectMode.enable == false }">{{ index+1 }}</div>
@@ -54,6 +57,7 @@
       </div>
     </div>
     </block>
+    </div>
   </template>
 </draggable>
 <it-divider/>
@@ -178,10 +182,71 @@ export default {
     }
   },
   methods: {
+    onAddCard(event){
+      console.log(event)
+    },
+    BtnDeleteCardById(id){ //Запуск анимации кдаления карточки
+      let cardID = id.toString();
+      if(this.$refs['card_'+cardID]){
+        let el = this.$refs['card_'+cardID];
+        el.style.setProperty('--card-height', el.clientHeight+'px');
+        el.classList.toggle('_card-leave', true);
+      }
+    },
+    CardAnimationEnd(event){
+      console.log(event);
+      switch (event.animationName) {
+        case 'test-body-card-click--animation':
+          event.target.classList.toggle('test-body-card-click', false);
+          break;
+        case 'card-leave--animation':
+          var handleCard = event.target.querySelector('.handle-card');
+          if(handleCard){
+            let cardID = handleCard.getAttribute('card-id');
+            let card = this.$refs['card_'+cardID];
+            if(card){
+              card.classList.toggle('_hide');
+            }
+            this.deleteCardById(cardID);
+          }
+          break;
+        case 'card-enter--animation':
+          event.target.classList.toggle('_card-enter', false);
+          break;
+        default:
+          break;
+      }
+      
+      //@animationend="AnimateCard($refs['card_'+items[index].id], false)" 
+    },
+    AnimateEnterCards(ids){ //Анимирование появления карт
+      let arr = [];
+      
+      if( typeof ids == 'string' || typeof ids == 'number' ){
+        arr.push(ids);
+      }else if( typeof ids != 'object' || ids.length == 0){
+        return false;
+      }else{
+        arr = ids;
+      }
+      console.log(arr);
+      for (let i = 0; i < arr.length; i++) {
+        const el = arr[i];
+        const card = this.$refs['card_'+el];
+        if(card){
+          let block = card.querySelector('.block'); 
+          console.log(block.clientHeight);
+          card.style.setProperty('--from-card-height', '0px');
+          card.style.setProperty('--card-height', block.clientHeight+'px');
+          card.classList.toggle('_card-enter', true);
+        }
+      }
+
+    },
     AnimateCard(card, val){
       console.log(card);
-      if(card?.$el){
-        card.$el.classList.toggle('test-body-card-click', val);
+      if(card != undefined){
+        card.classList.toggle('test-body-card-click', val);
       }
     },
     ClickCardBody(event){
@@ -219,7 +284,8 @@ export default {
         }
       }
     },
-    UpdateList(){
+    UpdateList(event){
+      console.log(event);
       this.$emit('changeList', this.items);
     },
     toggle(event) {
@@ -251,22 +317,34 @@ export default {
       console.log(this.items);
     },
     addCard(cardType) {
+      let newCardID = Math.random().toString().split('.')[1]; 
       switch (cardType) {
         case 'Simple':
         case 'Choice': 
         case 'Orthoepy':
-            this.items.push({id: Math.random().toString().split('.')[1], type: cardType });
+            this.items.push({id: newCardID, type: cardType });
             break;
         case 'Folder':
-          this.items.push({id: Math.random().toString().split('.')[1], type: cardType, name: 'Новая папка' });
+          this.items.push({id: newCardID, type: cardType, name: 'Новая папка' });
           break
         default:
           break;
       }
-      this.$emit('changeList', this.items);
+      this.$nextTick(()=>{
+        this.AnimateEnterCards(newCardID);
+      });
+      this.$emit('changeList', this.items); 
     },
-    deleteCard(index){
-      this.items.splice(index, 1);
+    deleteCardById(id){
+      let cardID =id.toString();
+      cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
+      for (let i = 0; i < this.items.length; i++) {
+        const el = this.items[i];
+        if(el.id == cardID){
+          this.items.splice(i, 1);
+          break;
+        }
+      } 
     },
     CheckSelectCount(){
       setTimeout(()=>{
@@ -284,6 +362,9 @@ export default {
       }
       card.id = Math.random().toString().split('.')[1];
       this.items.splice(index+1, 0, card);
+      this.$nextTick(()=>{
+        this.AnimateEnterCards(card.id);
+      });
     },
     ClickHandleCard(event){
       if(this.SelectMode.enable){
@@ -350,6 +431,9 @@ export default {
               break;
             }
           }
+          this.$nextTick(() => {
+            this.AnimateEnterCards(this.SelectMode.selected);
+          });
           this.moveCardsDialog = false;
           this.SelectMode.mode = '';
         },0);
@@ -450,6 +534,9 @@ export default {
       setTimeout(()=>{
         this.items.splice(index+1, 0, ...cards);
         this.SelectMode.selected = selected;
+        this.$nextTick(()=>{
+          this.AnimateEnterCards(this.SelectMode.selected);
+        });
       }, 0);
     },
     ConfirmDeleteCards(){
@@ -602,8 +689,12 @@ export default {
 .inner-card {
   padding: 10px;
 }
+.block-card-wrapper{
+  margin: 8px 0px;
+}
 .block {
   padding: 0px;
+  margin: 0px 8px;
   overflow: hidden;
 }
 .block._tool-bar{
