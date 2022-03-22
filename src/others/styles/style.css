@@ -17,12 +17,14 @@ width: 100%;
 }
 
 .navigator-bottom-root{
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   left: 0px;
   width: 100vw;
   height: 64px;
-
+  top: auto;
+  margin-top: auto;
+  margin-bottom: 0px;
 }
 .navigator-bottom-content{
   background-color: #3b4964;

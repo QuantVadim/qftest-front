@@ -175,8 +175,7 @@ export default {
       this.menuIsActive = false;
     },
     enterVK() {
-      document.location =
-        "https://oauth.vk.com/authorize?client_id=7870026&display=page&redirect_uri=http://localhost:8080/auth/vk&scope=offline&response_type=token&v=5.52";
+      document.location = conf.VK_AUTH_URL;
     },
   },
 };
