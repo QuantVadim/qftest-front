@@ -38,7 +38,10 @@
         <it-icon v-if="SelectMode.enable == false" @click="BtnDeleteCardById(items[index].id)" name="delete" size="32px" />
         <p-checkbox @click="CheckSelectCount" class="__card-check-box" v-else :name="'card-check_'+items[index].id" :value="items[index].id" v-model="SelectMode.selected" />
       </div>
-      <div @click="ClickHandleCard" class="handle-card-center" :class="{'handle-card-center_draggable': SelectMode.enable == false }">{{ index+1 }}</div>
+      <div @click="ClickHandleCard" 
+        class="handle-card-center" 
+        :class="{'handle-card-center_draggable': SelectMode.enable == false }"
+        >{{ index+1 }}</div>
       <div class="handle-part-right">
         <it-icon @click="DublicateCard(index)" name="content_copy" />
         <it-icon name="more_horiz" @click="toggle" />

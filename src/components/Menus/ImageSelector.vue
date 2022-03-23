@@ -72,9 +72,16 @@ export default {
         );
         console.log(event.target.files);
         this.axios.post(conf.UPLOAD_IMG_URL, fd).then((itm) => {
+          if(itm.data?.error){
+            this.$error('Ошибка загрузки изображения', itm.data.error);
+          }else{
+            this.list.AddStart(itm.data);
+            console.log(itm.data);
+          }
           this.isUploadingImage = false;
-          this.list.AddStart(itm.data);
-          console.log(itm.data);
+        }).catch(()=>{
+          this.isUploadingImage = false;
+          this.$error('Ошибка загрузки изображения', 'Проблемы с сетью');
         });
       }
     },
