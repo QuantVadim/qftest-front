@@ -7,8 +7,8 @@
         <template v-for="(item, index) in dt.choices" :key="index" class="choice-line">
               <!-- Режим обычный: -->
               <div class="choice-line" v-if="isImageMode == false">
-                <it-checkbox v-if="dt.isMultiple" v-model="dt.choices[index].selected">{{ dt.choices[index].label }}</it-checkbox>
-                <it-radio v-else v-model="dt.answer" :value="dt.choices[index].id" :label="dt.choices[index].label" />
+                <it-checkbox v-if="dt.isMultiple" v-model="dt.choices[index].selected"  @input="ChangeState">{{ dt.choices[index].label }}</it-checkbox>
+                <it-radio v-else v-model="dt.answer" :value="dt.choices[index].id" :label="dt.choices[index].label"  @input="ChangeState" />
               </div>
               <!-- Режим картинок: -->
               <div class="wrapper-choice" v-else>
@@ -18,8 +18,8 @@
                   <div class="choice-image _front" :style="'background-image: url(\''+dt.choices[index]?.image?.url+'\')'"></div>
                   </div>
                   <div class="choice-image-panel _bottom">
-                    <it-checkbox v-if="dt.isMultiple" :ref="'tgbox'+dt.choices[index].id" v-model="dt.choices[index].selected"> </it-checkbox>
-                    <it-radio v-else v-model="dt.answer" :ref="'tgbox'+dt.choices[index].id" :value="dt.choices[index].id"/>
+                    <it-checkbox v-if="dt.isMultiple" :ref="'tgbox'+dt.choices[index].id" v-model="dt.choices[index].selected" @input="ChangeState"> </it-checkbox>
+                    <it-radio v-else v-model="dt.answer" :ref="'tgbox'+dt.choices[index].id" :value="dt.choices[index].id" @input="ChangeState" />
                   </div>
                   <div class="choice-body-title">
                     <div class="choice-body-text" v-if="dt.choices[index].label.trim().length > 0" @click="toggle('tgbox'+dt.choices[index].id)">
@@ -78,6 +78,9 @@ export default {
     console.log(this.dt);
   },
   methods: {
+    ChangeState(){
+      this.$emit('change-card-state', this.dt);
+    },
     toggle(ref){
       const inp = this.$refs[ref].$el.getElementsByTagName('input')[0];
       inp.click();

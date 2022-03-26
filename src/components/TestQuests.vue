@@ -56,6 +56,7 @@
       :is="items[index].type.toLowerCase()+'Card_'+mode" 
       :data="items[index]" 
       @open-folder="OpenFolder" 
+      @change-card-state="ChangeCardState"
       />
       </div>
     </div>
@@ -185,6 +186,9 @@ export default {
     }
   },
   methods: {
+    ChangeCardState(data){
+      this.$emit('change-card-state', data);
+    },
     BtnDeleteCardById(id){ //Запуск анимации кдаления карточки
       let cardID = id.toString();
       if(this.$refs['card_'+cardID]){

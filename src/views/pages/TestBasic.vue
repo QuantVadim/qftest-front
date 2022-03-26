@@ -94,7 +94,7 @@
       </block>
       <!-- /Шапка теста -->
       <BlockUI :blocked="secondsLeft <= 0"> 
-        <TestQuests :data="test.body" :mode="'basic'" />
+        <TestQuests :data="test.body" :mode="'basic'" @change-card-state="ChangeCardState" />
       </BlockUI>
       <block style="text-align: center">
         <Button icon="pi pi-check" @click="SendTest" label="Отправить" />
@@ -115,6 +115,7 @@
     </block>
   </div>
 </template>
+
 
 <script>
 import TestQuests from "../../components/TestQuests";
@@ -140,9 +141,15 @@ export default {
       secondsLeft: undefined,
       timeInterval: undefined,
       saveTestSeconds: 60,
+
+      curEvents: [], //сборка последних типовых событий
+      
     };
   },
   methods:{
+    ChangeCardState(data){
+      console.log(data);
+    },
     getNormalDate,
     startTimer(){
       if(this.test?.duration_time){
@@ -171,7 +178,6 @@ export default {
           this.SendTest();
           clearInterval(this.timeInterval);
         }
-
       }
     },
     async SaveResult(){
@@ -250,17 +256,43 @@ export default {
         if(itm.data?.data){
           this.test = itm.data.data;
           this.startTimer();
+          this.GeneralEvent('load');
         }else if(itm.data?.error){
           this.$error("Ошибка загрузки теста", itm.data?.error);
         }
       });
+    },
+    GeneralEvent(name){
+      switch (name) {
+        case 'blur':
+          
+          break;
+      
+        default:
+          break;
+      }
+    },
+    OnBlur(){//Потеря активности страницы
+      this.GeneralEvent('blur')
+    },
+    OnFocus(){//Возврат активности страницы
+      this.GeneralEvent('focus')
     }
+  },
+  activated(){
+    window.addEventListener('blur', this.OnBlur);
+    window.addEventListener('focus', this.OnFocus);
+  },
+  deactivated(){
+    window.removeEventListener('blur', this.OnBlur);
+    window.removeEventListener('focus', this.OnFocus);
   },
   unmounted(){
     if(this.timeInterval){
       clearInterval(this.timeInterval);
       console.log('clearInterval');
     }
+    console.log('Неактивно!');
   },
   created(){
     this.LoadInfo();
