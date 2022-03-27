@@ -48,8 +48,19 @@
         </div>
         
         <div>Баллы: {{ test.score }} из {{ test.max_score }}</div>
+
+        <it-toggle
+          v-if="test?.chronology?.length > 0"
+          v-model="resultMode"
+          :options="['Ответы', 'Хронология']"
+        />
       </block>
-      <TestQuests :data="test.body" :mode="'result'" />
+      <div v-if="resultMode == 'Ответы'">
+        <TestQuests :data="test.body" :mode="'result'" />
+      </div>
+      <div v-else>
+        <ChronologyView :data="test.chronology" />
+      </div>
     </div>
     <div v-else class="center-loading">
       <it-loading></it-loading><br />
@@ -69,11 +80,12 @@
 
 <script>
 import TestQuests from "../../components/TestQuests";
+import ChronologyView from "@/components/ChronologyView";
 
 export default {
   props: ["set-res-id"],
   components: {
-    TestQuests,
+    TestQuests, ChronologyView,
   },
   computed: {
     MYID() {
@@ -84,6 +96,7 @@ export default {
     return {
       res_id: this?.setResId ? this.setResId : this.$route.params.id,
       test: undefined,
+      resultMode: 'Ответы',
     };
   },
   methods: {

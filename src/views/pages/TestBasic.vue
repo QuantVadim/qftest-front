@@ -142,12 +142,13 @@ export default {
       timeInterval: undefined,
       saveTestSeconds: 60,
 
-      curEvents: [], //сборка последних типовых событий
-      
+      lastCardChangedEvent: undefined, //последее состояние измененяемой карты
+      allEvents: [],
     };
   },
   methods:{
     ChangeCardState(data){
+      this.GeneralEvent('cardChange', data);
       console.log(data);
     },
     getNormalDate,
@@ -186,9 +187,11 @@ export default {
         q: 'save_gtest_result',
         me: this.getUser(),
         test: this.test,
+        events: this.allEvents,
       }
       this.axios.post(this.apiurl, obj).then(itm => {
         this.isResultSaving = false;
+        this.allEvents = [];
         console.log(itm.data);
         if(itm.data?.data){
           console.log('Сохранил тест');
@@ -205,11 +208,13 @@ export default {
         q: 'test_send',
         me: this.getUser(),
         test: this.test,
+        events: this.allEvents,
       }
       this.axios.post(this.apiurl, obj).then(itm => {
         console.log(itm.data);
         if(itm.data?.data){
           let test_id = itm.data?.data;
+          this.allEvents = [];
           this.$router.replace({path: `/result/${test_id}`});
         }else if(itm.data?.error){
           this.$error("Ошибка отправки теста", itm.data?.error);
@@ -262,15 +267,32 @@ export default {
         }
       });
     },
-    GeneralEvent(name){
-      switch (name) {
-        case 'blur':
-          
-          break;
-      
-        default:
-          break;
+    GeneralEvent(name, state){
+      if(this.test == undefined) return false;
+      let time = new Date();
+      let obj = {
+        name: name,
+        time: time.getTime(),
       }
+      if(name == 'cardChange' && state != undefined){
+        obj.state = state;
+        obj.cardId = state.id;
+        
+        if(this.lastCardChangedEvent?.cardId == state.id){
+            this.lastCardChangedEvent = obj;
+        }else{
+          if(this.lastCardChangedEvent != undefined)
+            this.allEvents.push(this.lastCardChangedEvent);
+          this.lastCardChangedEvent = obj;
+        }
+      }else{
+        if(this.lastCardChangedEvent != undefined){
+          this.allEvents.push(this.lastCardChangedEvent);
+          this.lastCardChangedEvent = undefined;
+        }
+        this.allEvents.push(obj);
+      }
+
     },
     OnBlur(){//Потеря активности страницы
       this.GeneralEvent('blur')
