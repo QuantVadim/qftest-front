@@ -4,7 +4,7 @@
     <div v-for="(item, index) in items" :key="index" class="chronology-line">
         <div v-if="items[index].name == 'cardChange'">
             <div class="chronology-line__header">
-                <div class="__header-point"></div>
+                <div class="__header-point _ico-cardchange"></div>
                 <span>[{{getTime(items[index].time)}}] Внесен ответ:</span> 
             </div>
             <div class="card-block">
@@ -15,6 +15,17 @@
                     />
                 </div>
             
+            </div>
+        </div>
+        <div v-else-if="items[index].name == 'leavePage'">
+            <div class="chronology-line__header">
+                <div class="__header-point _ico-exit"></div>
+                <span>[{{getTime(items[index].time)+' - '+getTime(items[index].timeEnd)}}]</span>
+                <span> Уход со страницы: </span>
+                
+            </div>
+            <div>
+                Активности не было: {{ (items[index].timeEnd - items[index].time)/100 }}
             </div>
         </div>
         <div v-else>
@@ -63,6 +74,10 @@ export default {
     border-left: 3px solid #6f6f6f;
     padding-left: 16px;
     margin-left: 10px;
+    padding-bottom: 16px;
+}
+.chronology-line:last-child{
+    border-left-color: rgba(0, 0, 0, 0);
 }
 .chronology-view-inner .card-block{
     border: 1px solid #dfdfdf;
@@ -74,7 +89,6 @@ export default {
 }
 .chronology-line__header {
     font-weight: bold;
-    padding-top: 12px;
     padding-bottom: 4px;
 }
 .chronology-line__header .__header-point{
@@ -85,6 +99,16 @@ export default {
     border-radius: 160%;
     margin-left: -34px;
     margin-top: -8px;
-    border: 3px solid #444444;
+    border: 2px solid #6f6f6f;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 28px 28px;
+}
+
+.__header-point._ico-cardchange{
+    background-image: url('/img/chronology_cardedit.png');
+}
+.__header-point._ico-exit{
+    background-image: url('/img/chronology_exit.png');
 }
 </style>
