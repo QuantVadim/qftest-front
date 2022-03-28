@@ -153,25 +153,25 @@ export default {
     },
     getNormalDate,
     startTimer(){
-      if(this.test?.duration_time){
+      if(this?.test?.gr_id != undefined){
         this.computeTimeLeft();
         if(this?.timeInterval != undefined){
           clearInterval(this.timeInterval);
           console.log('clearInterval');
         }
-        this.timeInterval = this.test?.duration_time ? setInterval(()=>{this.computeTimeLeft()}, 1000) : undefined; //Установа счетчика времени
+        this.timeInterval = this.test?.gr_id != undefined ? setInterval(()=>{this.computeTimeLeft()}, 1000) : undefined; //Установа счетчика времени
       }
     },
     computeTimeLeft(){
       console.log('Секунда');
-      if(this.test && this?.test?.duration_time && this?.test?.date_created){
+      if(this?.test && this?.test?.duration_time && this?.test?.date_created){
         let tc = new Date();
         let ti = new Date( Date.parse(this?.test?.date_created) );
         let sec = this?.test?.duration_time*60 - Math.floor((tc - ti)/1000);
         this.saveTestSeconds--;
         this.secondsLeft = sec;
         this.timeLeft = (sec/60 >=1 ? Math.floor(sec/60) +"м. ": '')+(sec%60+'c.');
-        if(this.saveTestSeconds == 0){
+        if(this.saveTestSeconds <= 0){
           this.saveTestSeconds = 60;
           this.SaveResult();
         }
@@ -179,10 +179,17 @@ export default {
           this.SendTest();
           clearInterval(this.timeInterval);
         }
+      }else if(this?.test && this?.test?.date_created){
+        this.saveTestSeconds--;
+        if(this.saveTestSeconds <= 0){
+          this.saveTestSeconds = 60;
+          this.SaveResult();
+        }
       }
     },
     async SaveResult(){
       this.isResultSaving = true;
+      this.GeneralEvent();
       let obj = {
         q: 'save_gtest_result',
         me: this.getUser(),
@@ -204,6 +211,7 @@ export default {
       });
     },
     async SendTest(){
+      this.GeneralEvent();
       let obj = {
         q: 'test_send',
         me: this.getUser(),
@@ -215,6 +223,10 @@ export default {
         if(itm.data?.data){
           let test_id = itm.data?.data;
           this.allEvents = [];
+          if(this?.timeInterval != undefined){
+            clearInterval(this.timeInterval);
+            console.log('clearInterval');
+          }
           this.$router.replace({path: `/result/${test_id}`});
         }else if(itm.data?.error){
           this.$error("Ошибка отправки теста", itm.data?.error);
@@ -269,6 +281,14 @@ export default {
     },
     GeneralEvent(name, state){
       if(this.test == undefined) return false;
+      if(name == undefined){
+        if(this.lastCardChangedEvent != undefined){
+          this.lastCardChangedEvent.state = JSON.parse(JSON.stringify(this.lastCardChangedEvent.state));
+          this.allEvents.push(this.lastCardChangedEvent);
+          this.lastCardChangedEvent = undefined;
+          return false;
+        }
+      }
       let time = new Date();
       let obj = {
         name: name,
@@ -281,12 +301,15 @@ export default {
         if(this.lastCardChangedEvent?.cardId == state.id){
             this.lastCardChangedEvent = obj;
         }else{
-          if(this.lastCardChangedEvent != undefined)
+          if(this.lastCardChangedEvent != undefined){
+            this.lastCardChangedEvent.state = JSON.parse(JSON.stringify(this.lastCardChangedEvent.state));
             this.allEvents.push(this.lastCardChangedEvent);
+          }
           this.lastCardChangedEvent = obj;
         }
       }else{
         if(this.lastCardChangedEvent != undefined){
+          this.lastCardChangedEvent.state = JSON.parse(JSON.stringify(this.lastCardChangedEvent.state));
           this.allEvents.push(this.lastCardChangedEvent);
           this.lastCardChangedEvent = undefined;
         }

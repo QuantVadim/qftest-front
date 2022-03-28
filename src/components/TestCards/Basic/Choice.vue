@@ -79,7 +79,9 @@ export default {
   },
   methods: {
     ChangeState(){
-      this.$emit('change-card-state', this.dt);
+      this.$nextTick(()=>{
+        this.$emit('change-card-state', this.dt);
+      });
     },
     toggle(ref){
       const inp = this.$refs[ref].$el.getElementsByTagName('input')[0];

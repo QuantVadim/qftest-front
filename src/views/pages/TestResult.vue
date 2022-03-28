@@ -55,10 +55,10 @@
           :options="['Ответы', 'Хронология']"
         />
       </block>
-      <div v-if="resultMode == 'Ответы'">
+      <div v-show="resultMode == 'Ответы'">
         <TestQuests :data="test.body" :mode="'result'" />
       </div>
-      <div v-else>
+      <div v-show="resultMode == 'Хронология'">
         <ChronologyView :data="test.chronology" />
       </div>
     </div>

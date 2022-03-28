@@ -5,7 +5,8 @@
         <div v-if="items[index].name == 'cardChange'">
             <div class="chronology-line__header">
                 <div class="__header-point _ico-cardchange"></div>
-                <span>[{{getTime(items[index].time)}}] Внесен ответ:</span> 
+                <span>[{{getTime(items[index].time)}}<span class="_sec">{{getSec(items[index].time)}}</span>]</span>
+                <span> Внесен ответ:</span> 
             </div>
             <div class="card-block">
                 <div class="card-block-inner">
@@ -14,18 +15,36 @@
                     :data="items[index].state"
                     />
                 </div>
-            
             </div>
         </div>
         <div v-else-if="items[index].name == 'leavePage'">
             <div class="chronology-line__header">
                 <div class="__header-point _ico-exit"></div>
-                <span>[{{getTime(items[index].time)+' - '+getTime(items[index].timeEnd)}}]</span>
-                <span> Уход со страницы: </span>
+                <span>[{{getTime(items[index].time)}}<span class="_sec">{{getSec(items[index].time)}}</span>
+                 - {{getTime(items[index].timeEnd)}}<span class="_sec">{{getSec(items[index].timeEnd)}}</span>]
+                </span>
                 
+                <span> Уход со страницы: </span>
             </div>
             <div>
-                Активности не было: {{ (items[index].timeEnd - items[index].time)/100 }}
+                Активности не было: {{ getCountTime(items[index].timeEnd - items[index].time) }}
+            </div>
+        </div>
+        <div v-else-if="items[index].name == 'start'">
+            <div class="chronology-line__header">
+                <div class="__header-point _ico-start"></div>
+                <span>[{{getTime(items[index].time)}}<span class="_sec">{{getSec(items[index].time)}}</span>]</span>
+                <span> Начало решения </span>
+            </div>
+        </div>
+        <div v-else-if="items[index].name == 'load'">
+            <div class="chronology-line__header">
+                <div class="__header-point _ico-load"></div>
+                <span>[{{getTime(items[index].timeEnd)}}<span class="_sec">{{getSec(items[index].timeEnd)}}</span>]</span>
+                <span> Возврат к решению </span>
+            </div>
+            <div>
+                Активности не было: {{ getCountTime(items[index].timeEnd - items[index].time) }}
             </div>
         </div>
         <div v-else>
@@ -64,12 +83,36 @@ export default {
             let minutes = newTime.getMinutes().toString();
             minutes = minutes.length == 1 ? '0'+minutes : minutes;
             return newTime.getHours()+':'+minutes;
+        },
+        getSec(time){
+            let newTime = new Date(time);
+            let sec = newTime.getSeconds().toString();
+            sec = sec.length == 1 ? '0'+sec : sec;
+            return '.'+sec;
+        },
+        getCountTime(time){
+            let tm = Math.floor(time/1000);
+            let min = Math.floor(tm/60);
+            let sec = (tm - min*60).toString();
+            let ret;
+            if(min > 0){
+                sec = sec.length == 1 ? '0'+sec : sec;
+                ret = min.toString()+':'+sec+' мин.';
+            }else{
+                ret = sec+' сек.'
+            }
+            return ret;
         }
     },
 }
 </script>
 
 <style scoped>
+.chronology-line__header ._sec{
+    color: #7d7d7d;
+    font-size: 12px;
+    font-weight: 500;
+}
 .chronology-line{
     border-left: 3px solid #6f6f6f;
     padding-left: 16px;
@@ -110,5 +153,13 @@ export default {
 }
 .__header-point._ico-exit{
     background-image: url('/img/chronology_exit.png');
+    border-color: #d9570e;
+}
+.__header-point._ico-start{
+    background-image: url('/img/chronology_start.png');
+}
+.__header-point._ico-load{
+    background-image: url('/img/chronology_load.png');
+    border-color: #d9570e;
 }
 </style>
