@@ -97,8 +97,8 @@
         <TestQuests :data="test.body" :mode="'basic'" @change-card-state="ChangeCardState" />
       </BlockUI>
       <block style="text-align: center">
-        <Button icon="pi pi-check" @click="SendTest" label="Отправить" />
-        <span v-if="test?.res_id" style="margin-left: 5px">
+        <Button icon="pi pi-check" @click="SendTest" :loading="isSendingTest" label="Отправить" />
+        <span v-if="test?.res_id && isTimeOver == false" style="margin-left: 5px">
           <Button icon="pi pi-save" @click="SaveResult" :loading="isResultSaving" label="Сохранить" />
         </span>
         
@@ -135,12 +135,15 @@ export default {
     return {
       isLoading: false,
       isResultSaving: false,
+      isSendingTest: false,
       info: undefined,
       test: undefined,
       timeLeft: undefined,
       secondsLeft: undefined,
       timeInterval: undefined,
       saveTestSeconds: 60,
+      isTimeOver: false, //Время на решение теста закончилось (показ кнопки сохранения)
+      TestState: undefined, //Бэкап теста при завершении таймера
 
       lastCardChangedEvent: undefined, //последее состояние измененяемой карты
       allEvents: [],
@@ -176,6 +179,7 @@ export default {
           this.SaveResult();
         }
         if(sec <= 0){
+          this.isTimeOver = true;
           this.SendTest();
           clearInterval(this.timeInterval);
         }
@@ -211,14 +215,24 @@ export default {
       });
     },
     async SendTest(){
+      this.isSendingTest = true;
       this.GeneralEvent();
+      let sendingTest = this.test;
+      if(this.isTimeOver && this.TestState == undefined){//сохранить состояние теста в TestState, если время решения закончено и состояние еще не сохранено
+        this.TestState = JSON.parse(JSON.stringify(this.test));
+        console.log('Сохранено состояние теста');
+      }else if(this.TestState != undefined){//При вовторной отправки, если есть сохраненное сосояние, то отправить его
+        sendingTest = this.TestState;
+        console.log('Отрправлено сохраненное ранее состояние теста');
+      }
       let obj = {
         q: 'test_send',
         me: this.getUser(),
-        test: this.test,
+        test: sendingTest,
         events: this.allEvents,
       }
       this.axios.post(this.apiurl, obj).then(itm => {
+        this.isSendingTest = false;
         console.log(itm.data);
         if(itm.data?.data){
           let test_id = itm.data?.data;
@@ -234,6 +248,7 @@ export default {
            this.$error("Ошибка отправки теста", "Неизвестная ошибка");
         }
       }).catch(()=>{
+        this.isSendingTest = false;
         this.$error("Ошибка отправки теста", "Отсутствует соединение");
       });
     },
@@ -280,7 +295,7 @@ export default {
       });
     },
     GeneralEvent(name, state){
-      if(this.test == undefined) return false;
+      if(this.test == undefined || this.isTimeOver) return false;
       if(name == undefined){
         if(this.lastCardChangedEvent != undefined){
           this.lastCardChangedEvent.state = JSON.parse(JSON.stringify(this.lastCardChangedEvent.state));
@@ -331,6 +346,13 @@ export default {
   deactivated(){
     window.removeEventListener('blur', this.OnBlur);
     window.removeEventListener('focus', this.OnFocus);
+  },
+  beforeUnmount(){
+    if(this?.test?.gr_id && (this?.test?.duration_time != undefined && this.secondsLeft > 0)){
+      this.SaveResult();
+    }else if(this?.test?.gr_id && this?.test?.duration_time == undefined){
+      this.SaveResult();
+    }
   },
   unmounted(){
     if(this.timeInterval){
