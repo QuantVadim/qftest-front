@@ -49,6 +49,13 @@ width: 100%;
 }
 
 .pencil-writing{
+  background-image: url('/img/pencil_writing_ico.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  background-size: 36px 36px;
+  width: 50px;
+  height: 50px;
   animation: 2s pencil-writing infinite ;
 }
 

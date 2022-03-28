@@ -2,11 +2,11 @@
 <div v-if="items != undefined">
     <block class="chronology-view-inner">
     <div v-for="(item, index) in items" :key="index" class="chronology-line">
-        <div v-if="items[index].name == 'cardChange'">
+        <div v-if="items[index].name == 'cardChange' || items[index].name == 'cardEnter'">
             <div class="chronology-line__header">
-                <div class="__header-point _ico-cardchange"></div>
-                <span>[{{getTime(items[index].time)}}<span class="_sec">{{getSec(items[index].time)}}</span>]</span>
-                <span> Внесен ответ:</span> 
+                <div class="__header-point" :class="'_ico-'+items[index].name.toLowerCase()"></div>
+                <span class="_time">[{{getTime(items[index].time)}}<span class="_sec">{{getSec(items[index].time)}}</span>]</span>
+                <span> Ответ {{items[index].name == 'cardChange' ? 'изменен' : 'внесен'}}:</span> 
             </div>
             <div class="card-block">
                 <div class="card-block-inner">
@@ -24,7 +24,7 @@
                  - {{getTime(items[index].timeEnd)}}<span class="_sec">{{getSec(items[index].timeEnd)}}</span>]
                 </span>
                 
-                <span> Уход со страницы: </span>
+                <span> Потеря фокуса </span>
             </div>
             <div>
                 Активности не было: {{ getCountTime(items[index].timeEnd - items[index].time) }}
@@ -150,6 +150,9 @@ export default {
 
 .__header-point._ico-cardchange{
     background-image: url('/img/chronology_cardedit.png');
+}
+.__header-point._ico-cardenter{
+    background-image: url('/img/chronology_cardenter.png');
 }
 .__header-point._ico-exit{
     background-image: url('/img/chronology_exit.png');

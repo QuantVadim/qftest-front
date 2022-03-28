@@ -25,7 +25,7 @@
             <div class="result-card-score">{{ data.score+"/"+data.max_score }}</div>
          </span>
         <span v-else>
-          <i class="pi pi-pencil pencil-writing" style="font-size: 30px; padding: 10px"></i>
+          <div class="pencil-writing" style=" padding: 10px"></div>
         </span>
       </div>
     </div>
