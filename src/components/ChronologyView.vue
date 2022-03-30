@@ -91,17 +91,27 @@ export default {
             return '.'+sec;
         },
         getCountTime(time){
-            let tm = Math.floor(time/1000);
-            let min = Math.floor(tm/60);
-            let sec = (tm - min*60).toString();
-            let ret;
-            if(min > 0){
-                sec = sec.length == 1 ? '0'+sec : sec;
-                ret = min.toString()+':'+sec+' мин.';
-            }else{
-                ret = sec+' сек.'
-            }
+            let sec = Math.floor(time/1000); //Секунды 100 000
+            let min = Math.floor(sec/60); //Минуты 1 666
+                sec-=(min*60);
+            let hours = Math.floor(min/60); //Часы 27
+                min-=(hours*60);
+            let days = Math.floor(hours/24);//Дни 1
+                hours-=(days*24);
+            let ret = '';
+            if(days > 0) ret+= days+' дн. ';
+            if(hours > 0) ret+= hours+' ч. ';
+            if(sec > 0) ret+= sec+' сек. ';
+            ret = ret.trim();
             return ret;
+            // if(min > 0){
+            //     sec = sec.length == 1 ? '0'+sec : sec;
+            //     ret = min.toString()+':'+sec+' мин.';
+            // }else{
+            //     ret = sec+' сек.'
+            // }
+            // return ret;
+
         }
     },
 }
