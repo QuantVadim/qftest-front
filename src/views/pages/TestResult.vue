@@ -6,7 +6,7 @@
           <div  v-if="test?.group" class="group-info" 
             @click="$router.push(`/group/${test?.group.gr_id}`)" >
             <div class="user-item-row">
-            <it-avatar :src="test?.group.user_avatar" />
+            <it-avatar :src="test?.group.ico_url" />
             <div class="user-name">
               <h3>{{ test?.group.group_name }}</h3>
             </div>
