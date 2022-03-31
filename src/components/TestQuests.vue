@@ -360,6 +360,7 @@ export default {
       }
       card.id = Math.random().toString().split('.')[1];
       this.items.splice(index+1, 0, card);
+      this.$emit('change-list', this.items);
       this.$nextTick(()=>{
         this.AnimateEnterCards(card.id);
       });
