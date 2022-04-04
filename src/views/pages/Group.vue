@@ -49,7 +49,7 @@
           </div>
         </block>
         <block>
-          <GTestsLIst :data="cashTests" @cash="toCashTests" />
+          <GTestsLIst ref="gTestList" :data="cashTests" @cash="toCashTests" />
         </block>
       </div>
       <div v-if="tab == 'Администрирование'">
@@ -287,6 +287,15 @@ export default {
         this.editGroupData.description = this.group?.description;
       }
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    console.log(this.$refs['gTestList']);
+    if(this.$refs['gTestList'].isWinResults){
+      this.$refs['gTestList'].isWinResults = false;
+      next(false);
+      return;
+    }
+    next(true)
   },
   activated(){
     this.$emit('activated');
