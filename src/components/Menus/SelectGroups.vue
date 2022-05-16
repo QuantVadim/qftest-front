@@ -1,5 +1,6 @@
 <template>
   <div>
+    <br>
     <div v-for="(item, index) in items" :key="index">
       <label class="itm-group" :for="'itmgr_'+item.gr_id">
       <div>
@@ -40,7 +41,6 @@ export default {
         });
         this.$emit('change', list);
       }, 0);
-      
     },
     async Load() {
       if (this.isLoading) return false;

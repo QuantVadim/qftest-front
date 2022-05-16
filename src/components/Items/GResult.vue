@@ -22,27 +22,30 @@
           <span v-else>В процессе...</span>  
         </div>
       </div>
-      <div>
-        <Knob v-if="data.ready == 1" v-model="score" :min="0" :max="100" :size="50" :valueTemplate="score+'%'" readonly />
-        <span v-else><div class="pencil-writing" style=" padding: 10px"></div></span>
+      <div class="card-result-body_grade">
+        <!-- <Knob v-if="data.ready == 1" v-model="score" :min="0" :max="100" :size="50" :valueTemplate="score+'%'" readonly />
+        <span v-else><div class="pencil-writing" style=" padding: 10px"></div></span> -->
+        <ResultScore :data='data' />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Knob from 'primevue/knob';
+
 import Menu from 'primevue/menu';
 import {getNormalDate} from "@/others/helpers";
+import ResultScore from "@/components/Parts/ResultScore.vue";
 
 export default {
   components:{
-    Knob, Menu
+    Menu, ResultScore
   },
   props: ['data', 'index'],
   data(){
     return{
       score: Math.floor((+this.data.score/+this.data.max_score)*100),
+      assessment: undefined,
       itemsMenu: [
         {
 					label: 'К тесту',
@@ -89,6 +92,14 @@ export default {
       //window.open(`/result/${this.data.res_id}`, '_blank');
     }
   },
+  mounted(){
+    if(this.data != undefined){
+        if(this.data?.assessment && this.data?.assessment.length > 0){
+          let assess = JSON.parse(this.data.assessment);
+          this.$nextTick(()=>{this.assessment = assess});
+        }
+    }
+  },
   renderTracked(){
     this.score = Math.floor((+this.data.score/+this.data.max_score)*100);
   }
@@ -101,7 +112,10 @@ export default {
 }
 </style>
 <style scoped>
-
+.card-result-body_grade{
+  display: grid;
+  align-items: center;
+}
 .itm-gresult-center{
   margin-left: 6px;
 }

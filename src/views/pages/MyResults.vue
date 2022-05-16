@@ -43,7 +43,7 @@ export default {
       items: [],
       isLoading: false,
       isButtonLoad: true,
-      //Комментарий
+
       isWinDelResult: false,
       curDelResult: undefined,
       curDelResultIndex: undefined,

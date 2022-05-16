@@ -15,7 +15,7 @@
     <it-toggle
       v-model="curTab"
       :options="['Группы', 'Параметры']"
-    /><br>
+    />
     <SelectGroups v-if="curTab=='Группы'" :data="cashGroups" class="enter-show" @change="onSelectedItems" @cash="toCashGroups" />
     <TestPublishingSettings v-if="curTab=='Параметры'" :data="cashSettings" class="enter-show" @cash="toCashSettings" />
     <br>
@@ -92,7 +92,15 @@ export default {
 };
 </script>
 
+<style>
+.test-settings .p-tabview-nav{
+  display: flex !important;
+  justify-content: center !important;
+}
+</style>
+
 <style scoped>
+
 .it-share-test-comment{
   margin: 8px 0px;
 }

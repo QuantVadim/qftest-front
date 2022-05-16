@@ -1,3 +1,13 @@
+body{
+  /*background-image:url( "https://x.myqf.ru/background.jpg") !important; */
+  background-attachment: fixed !important;
+  background-repeat: no-repeat;
+  background-size: cover !important;
+}
+
+.p-dropdown-panel.p-component{
+  z-index: 999999 !important;
+}
 
 @media screen and (max-width: 900px) {
   .navigator-bottom-root{
@@ -466,4 +476,57 @@ height: 40px;
 .editing-choice .choice-image-panel._top .it-btn{
   animation: show 0.2s;
   display: flex;
+}
+
+
+/* Отображение звезд */
+.star-view{
+  font-family: primeicons;
+}
+.star-view .star3_2::after{
+  content: "\e936\e936\e936";
+}
+.star-view .star3_3::after{
+  content: "\e937\e936\e936";
+}
+.star-view .star3_4::after{
+  content: "\e937\e937\e936";
+}
+.star-view .star3_5::after{
+  content: "\e937\e937\e937";
+}
+.star-view{
+  color: #ff9100;
+}
+
+/* Отображение оценки */
+.grade-view._point5{
+  color: #f02424;
+  font-family: serif;
+}
+.grade-view._point5>div{
+  font-size: 24px !important;
+  font-weight: 500;
+  padding: 2px 3px;
+  border-radius: 100%;
+  height: 34px;
+  width: 34px;
+  text-align: center;
+  border: 1px solid #dbdbdb;
+}
+._point5_2{
+  color: #7c0101;
+  border-color: #7c0101 !important;
+}
+._point5_3{
+  color: #ad0000;
+  border-color: #ad0000 !important;
+}
+._point5_4{
+  color: #d40303;
+  border-color: #d40303 !important;
+}
+._point5_5{
+  color: red;
+  border-color: red !important;
 }

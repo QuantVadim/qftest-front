@@ -68,6 +68,13 @@
                 <it-input prefix="Ссылка" v-model="join_link" readonly />
               </div>
             </AccordionTab>
+            <AccordionTab header="Оценивание">
+                <Dropdown v-model="selectedAssessment" :options="assessments" optionLabel="label" placeholder="Выбрать..." />
+                <AssessmentProps :data="selectedAssessment" @update="assessmentUpdate"/>
+                <div style="display: flex; margin-top: 10px;">
+                  <p-button label="Сохранить" :loading="isAssessmentSaving" @click="AssessmentSave" class="p-button-outlined p-button-secondary" />
+                </div>
+            </AccordionTab>
             <AccordionTab header="Другие настройки">
               <p-button class="p-button-danger p-button-outlined" @click="isWindowGroupClose = true" label="Закрыть группу" />
             </AccordionTab>
@@ -223,11 +230,17 @@ import ImageSelector from "@/components/Menus/ImageSelector";
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Dropdown from 'primevue/dropdown';
+
+import AssessmentProps from '@/components/SettingsUnits/AssessmentProps'
+import {Assessments} from "@/DataLib" //Каталог шкал оценивания
+
 // @ is an alias to /src
 
 export default {
   components: {
-    GroupUsers, GTestsLIst, TestResult, Sidebar, ImageSelector, Accordion, AccordionTab, ConfirmDialog
+    GroupUsers, GTestsLIst, TestResult, Sidebar, ImageSelector, Accordion, AccordionTab, ConfirmDialog, Dropdown,
+    AssessmentProps
   },
   data() {
     return {
@@ -237,6 +250,7 @@ export default {
       isEditingDescriptionGroup: false,
       isClosingGroup: false,
       isWaitJoinGroup: false,
+      isAssessmentSaving: false,
       isImageSelector: false,
       isWindowEditDescription: false,
       isWindowGroupClose: false,
@@ -248,6 +262,9 @@ export default {
       editGroupData: {name: '', description: ''},
       result_id: null,
       isOpenResult: false,
+
+      selectedAssessment: undefined,
+      assessments: undefined,
 
       ScrollY: 0,
     };
@@ -274,6 +291,25 @@ export default {
     },
   },
   watch: {
+    group(val){
+      if(val != undefined){
+        if(val?.assessment){
+          this.$nextTick(()=>{
+            let assess = JSON.parse( val.assessment);
+            for (let i = 0; i < this.assessments.length; i++) {
+              const el = this.assessments[i];
+              if(el.name == assess.name){
+                this.assessments[i].body = assess.body;
+                this.selectedAssessment = this.assessments[i];
+                break;
+              }
+            }
+          })
+        }else{
+          this.selectedAssessment = this.assessments[0];
+        }
+      }
+    },
     winResult(){
       this.isOpenResult = this.$route.query?.result ? true : false;
       console.log('ss', this.isOpenResult );
@@ -290,7 +326,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     console.log(this.$refs['gTestList']);
-    if(this.$refs['gTestList'].isWinResults){
+    if(this.$refs['gTestList']?.isWinResults){
       this.$refs['gTestList'].isWinResults = false;
       next(false);
       return;
@@ -303,7 +339,41 @@ export default {
   mounted() {
     this.GroupLoad();
   },
+  created(){
+    this.assessments = JSON.parse(JSON.stringify(Assessments));
+  },
   methods: {
+    AssessmentSave(){
+      console.log(JSON.stringify(this.selectedAssessment));
+      this.isAssessmentSaving = true;
+      let obj = {
+        me: this.$store.state.ME.data,
+        q: 'group_set_assessment',
+        gr_id: this.group.gr_id,
+        assessment: JSON.stringify(this.selectedAssessment),
+      }
+      this.axios.post(this.apiurl, obj).then((itm)=>{
+        if(itm.data?.data){
+          this.$success('Изменение системы оценивания', 'Система оценивания была успешно изменина');
+          this.group.assessment = JSON.parse(itm.data?.data);
+          this.isAssessmentSaving = false;
+        }else{
+          this.$error("Ошибка изменения системы оценивания", itm.data?.error || "Неизветсная ошибка")
+          console.log(itm.data);
+        }
+      }).catch(()=>{
+        this.$error("Ошибка изменения системы оценивания", "Проблемы с соединением");
+      });
+    },
+    assessmentUpdate(obj){
+      for (let i = 0; i < this.assessments.length; i++) {
+        const el = this.assessments[i];
+        if(el.name == obj.name){
+          this.assessments[i].body = obj.body;
+          break;
+        }
+      }
+    },
     SelectImage(img){
       let obj = {
         me: this.$store.state.ME.data,

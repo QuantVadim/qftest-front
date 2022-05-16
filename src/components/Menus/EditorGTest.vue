@@ -39,6 +39,7 @@ export default {
         date_end:  this.data?.date_end ? new Date(this.data?.date_end) : undefined,
         duration_time: +(this.data.duration_time),
         is_duration_time: this.data?.duration_time ? true : false,
+        assessment: this.data?.assessment || undefined, 
       },
       isBtnShare: false,
     };
@@ -54,6 +55,7 @@ export default {
     },
     saveGTest(){
       if(this.sharingTest) return false;
+      console.log('saveGTest', this.cashSettings);
       this.sharingTest = true;
       let obj = {
         q: 'edit_gtest',

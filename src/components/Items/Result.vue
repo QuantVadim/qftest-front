@@ -22,26 +22,22 @@
           <pre>{{ data.description}}</pre>
         </span>
       </div>
-      <div>
-         <span v-if="data.ready == 1">
-            <Knob v-model="score" :min="0" :max="100" :size="50" :valueTemplate="score+'%'" readonly />
-            <div class="result-card-score">{{ data.score+"/"+data.max_score }}</div>
-         </span>
-        <span v-else>
-          <div class="pencil-writing" style=" padding: 10px"></div>
-        </span>
+      <div class="card-result-body_grade">
+        <ResultScore :data='data' />
+        <div class="result-card-score">{{ data.score+"/"+data.max_score }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Knob from 'primevue/knob';
+//import Knob from 'primevue/knob';
 import Menu from 'primevue/menu';
+import ResultScore from "@/components/Parts/ResultScore.vue";
 
 export default {
   components:{
-    Knob, Menu
+    Menu, ResultScore
   },
   props: ['data', 'index'],
   data(){

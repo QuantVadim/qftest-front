@@ -1,5 +1,7 @@
 <template>
   <div class="test-settings">
+  <TabView>
+  <TabPanel header="Ограничения">
     <!-- Кол-во попыток -->
     <div class="p-field-checkbox">
       <Checkbox id="is_limit_attempts" v-model="stg.is_limit_attempts" :binary="true" />
@@ -49,7 +51,14 @@
     </div>
      <Divider />
      
-    
+  </TabPanel>
+  <TabPanel header="Оценивание">
+    <div>
+      <Dropdown v-model="stg.assessment" :options="assessments" optionLabel="label" placeholder="Выбрать..." />
+      <AssessmentProps :data="stg?.assessment" @update="assessmentUpdate"/>
+    </div>
+  </TabPanel>
+  </TabView>
   </div>
 </template>
 
@@ -58,10 +67,18 @@ import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import Divider from "primevue/divider";
+import Dropdown from 'primevue/dropdown';
+
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+
+import AssessmentProps from '@/components/SettingsUnits/AssessmentProps'
+import {Assessments} from "@/DataLib" //Каталог шкал оценивания
 
 export default {
   components:{
-    InputNumber, Checkbox, Divider, Calendar
+    InputNumber, Checkbox, Divider, Calendar,
+    TabView, TabPanel, Dropdown, AssessmentProps
   },
   props:['data'],
   beforeMount(){
@@ -72,6 +89,7 @@ export default {
   },
   data(){
     return{
+      assessments: undefined,
       stg:{
         is_limit_attempts: false,
         limit_attempts: 1,
@@ -86,11 +104,35 @@ export default {
     }
   },
   methods:{
-
+    assessmentUpdate(){
+      console.log(this.stg);
+    }
   },
   watch:{
   },
-  created(){
+  mounted(){
+    let isSet = false;
+    this.assessments = JSON.parse(JSON.stringify(Assessments));
+    this.assessments.splice(0, 0, {name:'default', label: 'По-умолчанию', fullName: 'Система оценивания по-умолчанию'});
+    //Установка системы оценивания для теста, если она есть
+    console.log('stg', this.stg?.assessment);
+    if(this.stg?.assessment?.length > 0 || this.stg?.assessment?.name){
+      this.stg.assessment = this.stg?.assessment?.name ? this.stg.assessment : JSON.parse(this.stg.assessment);
+      for (let i = 0; i < this.assessments.length; i++) {
+        const el = this.assessments[i];
+        if(el.name == this.stg.assessment.name){
+          if(this.assessments[i]?.body){
+            this.assessments[i].body = this.stg.assessment.body;
+          }
+          this.stg.assessment = this.assessments[i];
+          isSet = true;
+          break;
+        }
+      }
+    }
+    if(isSet == false){
+      this.stg.assessment = this.assessments[0];
+    }
     //Сохранение параметров публикации при изменении
     this.$watch('stg', ()=>{
       this.$emit('cash', this.stg);
@@ -100,6 +142,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.p-dropdown-panel{
+  z-index: 999999 !important;
+}
+</style>
 
 <style>
 .p-datepicker.p-component{
