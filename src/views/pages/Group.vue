@@ -87,7 +87,7 @@
             @cash="CashItems"
             :data="getCashUsers"
             :gr_id="$route.params.id"
-            :accepted="tabPeople == 'Участники'"
+            :accepted="getAccepted(tabPeople)"
             :key="tabPeople"
           />
         </block>
@@ -286,16 +286,24 @@ export default {
       return this.group.gr_id + "/" + this.group.join_key;
     },
     getCashUsers() {
-      if (this.tabPeople == "Участники") return this.cashUsers[0];
-      else return this.cashUsers[1];
+      let ret;
+      switch (this.tabPeople) {
+        case "Участники":
+          ret = this.cashUsers[0]
+          break;
+        case "Заявки":
+          ret = this.cashUsers[1];
+          break;
+      }
+      return ret;
     },
   },
   watch: {
     group(val){
       if(val != undefined){
-        if(val?.assessment){
+        if(val?.assessment && val?.assessment?.name == undefined){
           this.$nextTick(()=>{
-            let assess = JSON.parse( val.assessment);
+            let assess = JSON.parse(val.assessment);
             for (let i = 0; i < this.assessments.length; i++) {
               const el = this.assessments[i];
               if(el.name == assess.name){
@@ -343,6 +351,18 @@ export default {
     this.assessments = JSON.parse(JSON.stringify(Assessments));
   },
   methods: {
+    getAccepted(tabName){
+      let ret = undefined;
+      switch (tabName) {
+        case 'Участники':
+          ret = true;
+          break;
+        case 'Заявки':
+          ret = false;
+          break;
+      }
+      return ret;
+    },
     AssessmentSave(){
       console.log(JSON.stringify(this.selectedAssessment));
       this.isAssessmentSaving = true;
@@ -495,8 +515,14 @@ export default {
       this.cashTests = items;
     },
     CashItems(items) {
-      if (this.tabPeople == "Участники") this.cashUsers[0] = items;
-      else this.cashUsers[1] = items;
+      switch (this.tabPeople) {
+        case "Участники":
+          this.cashUsers[0] = items
+          break;
+        case "Заявки":
+          this.cashUsers[1] = items;
+          break;
+      }
     },
     SwitchJoinGroup() {
       setTimeout(() => {

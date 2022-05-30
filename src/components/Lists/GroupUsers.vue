@@ -146,14 +146,14 @@ export default {
       let obj = {
         q: "get_group_users",
         me: this.$store.state.ME.data,
-        accepted: this.accepted,
         gr_id: this.gr_id,
+        accepted: this.accepted,
         desc: true,
-        count: 30,
+        count: 50,
       };
-      if (this.items.length > 0)
+      if (this.items.length > 0){
         obj.point = this.items[this.items.length - 1].req_id;
-
+      }
       this.axios.post(this.apiurl, obj).then((itm) => {
         console.log(itm.data);
         if (itm.data?.data) {
