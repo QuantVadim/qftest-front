@@ -1,6 +1,7 @@
 //Менеджер загрузки списка
 import conf from "@/conf.js";
 import axios from "axios";
+import store from '@/store';
 
 export default{
   Create(user, query, colName, count, desc = true, func){
@@ -9,14 +10,17 @@ export default{
       isLoading: false, //Идет ли загрузка данных
       isMore: true,//Есть ли еще контент для 
       info: undefined,
+      isDesc: desc,
+      findText: null,
       async Load() {
         if (this.isLoading) return false;
         this.isLoading = true;
         let obj = {
           q: query,
-          me: user,
-          desc,
+          me: user || store.state.ME.data,
+          desc: this.isDesc,
           count,
+          findText: this.findText || null,
         };
         if(this.info) obj.info = this.info;
         if (this.items.length > 0)
@@ -38,6 +42,14 @@ export default{
           if(func) func();
         });
       },
+      Find( value ){ //cols = 'first_name, last_name'];
+        if(value.length > 0){
+          this.findText = value;
+        }else{
+          this.findText = null;
+        }
+        this.Refresh();
+      },
       Refresh(){
         this.isMore = true;
         this.items = [];
@@ -52,6 +64,15 @@ export default{
           }
         }
         if(del != undefined) this.items.splice(del, 1);
+      },
+      SetBy(data, colName){
+        for (let i = 0; i < this.items.length; i++) {
+          const el = this.items[i];
+          if(el[colName] == data[colName]){
+            this.items[i] = data;
+            break;
+          }
+        }
       },
       SetInfo(itm){
         this.info = itm;

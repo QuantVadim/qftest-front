@@ -5,6 +5,142 @@ body{
   background-size: cover !important;
 }
 
+
+/*  Layouts */
+._part._left{
+  animation: ease-in-out 0.2s enter-logo;
+ }
+ .main-logo{
+   animation: 0.2s enter-logo;
+   display: grid;
+   grid-template-columns: auto 1fr;
+   align-items: center;
+   position: absolute;
+   z-index: 4;
+   margin-top: -53px;
+   font-size: 24px;
+   color: white;
+ }
+ .main-grid-center>._part{
+   display: block;
+ }
+ ._part._left{
+   padding: 10px;
+   background-color: white;
+   height: max-content;
+   max-width: 300px;
+   width: 100%;
+   margin-left: auto;
+   border-radius: 8px;
+   margin-top: 8px;
+ }
+ .main-grid-center>main{
+   margin: inherit;
+   max-width: 600px;
+   overflow-y:auto;
+   /* height: calc( 100vh - 42px); */
+ }
+ .main-grid-center{
+   display: grid;
+   grid-template-columns: 1fr 600px 1fr;
+ }
+ .btn-sidebar-menu i{
+   display: none !important;
+ }
+ @media screen and (max-width: 900px) {
+  .main-grid-center > ._part{display: none !important;}
+  .main-grid-center>main{
+    margin: auto;
+    max-width: 600px;
+  }
+  .main-grid-center{
+    display: block;
+  }
+  .btn-sidebar-menu i{
+    display: inline-block !important;
+  }
+  }
+  .wide-content-mode .main-grid-center > ._part{display: none !important;}
+  .wide-content-mode .main-grid-center>main{
+    margin: auto;
+    max-width: 700px;
+  }
+  .wide-content-mode .main-grid-center{
+    display: block;
+  }
+  .wide-content-mode .btn-sidebar-menu i{
+    display: inline-block !important;
+  }
+  
+  .wide-content-mode .main-grid-center>main{
+    height: auto;
+    min-height: calc( 100vh - 42px);
+  }
+  
+  .it-toggle{
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  .block .it-toggle{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  
+  .enter-show {
+    animation: enter-show 0.4s;
+  }
+  
+  .h-enter-vk {
+    display: block;
+    color: white !important;
+    height: 41px;
+  }
+  .header_user_info {
+    color: white;
+    padding: 4px;
+    cursor: pointer;
+  }
+  .p-sidebar-header {
+    padding-bottom: 0px !important;
+  }
+  h3.h3-title {
+    padding: 0px 0px;
+    margin: 0px;
+    margin-bottom: 10px;
+  }
+  header .it-drawer-body > div {
+    margin: 16px;
+  }
+  header i {
+    padding: 5px;
+    padding-left: 10px;
+    font-size: 32px !important;
+    width: 32px;
+    height: 32px;
+    background-size: cover;
+    cursor: pointer;
+  }
+  header {
+    top: 0px;
+    position: sticky;
+    z-index: 1;
+    background-color: rgb(72, 101, 156);
+    height: 42px;
+  }
+  ._part._left{
+    top: 50px;
+    margin-bottom: auto;
+    bottom: auto;
+    position: sticky;
+    z-index: 1;
+  }
+  .header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+  }
+/*  /Layouts */
+
+
 .p-dropdown-panel.p-component{
   z-index: 999999 !important;
 }
@@ -70,6 +206,29 @@ width: 100%;
   width: 50px;
   height: 50px;
   animation: 2s pencil-writing infinite ;
+}
+
+@keyframes enter-show {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes enter-logo {
+  from{
+    opacity: 0;
+    transform: translateX(20px);
+    transition: 0.2s all;
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0px);
+  }
 }
 
 @keyframes pencil-writing{
@@ -529,4 +688,32 @@ height: 40px;
 ._point5_5{
   color: red;
   border-color: red !important;
+}
+
+
+/* Admin-панель */
+.admin-table th{
+  padding: 6px 16px;
+  background-color: #ccdbf7;
+}
+.admin-table tr:nth-child(2n){
+  background-color: rgb(236, 236, 236);
+}
+.admin-table tr.table-row:hover{
+  outline: 1px solid gray;
+  background-color: #b9d0fc;
+  cursor: pointer;
+}
+.admin-table td{
+  padding: 3px 8px;
+}
+label.my-label-form {
+  margin-left: 0.5rem;
+  margin-bottom: 8px;
+  color: #6c757d;
+  font-size: 12px;
+  position: absolute;
+  pointer-events: none;
+  margin-top: -1.2rem;
+  line-height: 1;
 }

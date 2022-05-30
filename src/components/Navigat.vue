@@ -7,6 +7,10 @@
           <it-button block @click="goRoute('/groups')">Группы</it-button>
           <it-button block @click="goRoute('/test/new/editor')">Создать тест</it-button>
         </it-button-group>
+        <div v-if="$store.state?.ME.data?.user_type == 'admin' || $store.state?.ME.data?.user_type == 'mentor'">
+          <br>
+          <it-button block @click="goRoute('/admin')">Администрирование</it-button>
+        </div>
   </div>
 </template>
 

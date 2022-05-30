@@ -24,7 +24,7 @@
       <div class="main-logo"><img src="/vimg/logo.png" height="30" alt=""><span>QF Тесты</span></div>
       <div><Navigat /></div>
     </div>
-    <main class="main" @mousedown="SaveScroll">
+    <main class="main">
       <!-- <keep-alive>
         <router-view :key="$route.path" class="enter-show" />
       </keep-alive> -->
@@ -32,7 +32,7 @@
   <router-view v-slot="{ Component }" class="enter-show">
     <div>
       <keep-alive :max="2">
-        <component @activated="ActivatedKeepAlive" v-if="isKeepAlive"  :is="Component" :key="$route.path" />
+        <component v-if="isKeepAlive"  :is="Component" :key="$route.path" />
       </keep-alive>
     </div>
     <div v-if="!isKeepAlive">
@@ -105,7 +105,6 @@ export default {
     return {
       Main: undefined,
       keepAlives: ['Group', 'Groups', 'MyTests', 'MyResults', 'Home', 'GroupTestBasic', 'TestBasic', 'TestResult', 'TestEditor'],
-      ScrollInfo: {},
       IsWideContent: false,
 
       NecessarilyUser: ["MyTests"],
@@ -153,23 +152,6 @@ export default {
       }
       this.IsWideContent = isWideContent;
     },
-    ActivatedKeepAlive(){
-      if(this.Main)
-      for(let i = 0; i < this.keepAlives.length; i++){
-        if(this.$route.name == this.keepAlives[i]){
-          this.Main.scrollTop = this.ScrollInfo[this.keepAlives[i]];
-        }
-      }
-    },
-    SaveScroll(){
-      if(this.isKeepAlive){
-        for(let i = 0; i < this.keepAlives.length; i++){
-          if(this.$route.name == this.keepAlives[i]){
-            this.ScrollInfo[this.keepAlives[i]] = this.Main.scrollTop;
-          }
-        }
-      }
-    },
     goRoute(route) {
       this.$router.push(route);
       this.menuIsActive = false;
@@ -182,158 +164,14 @@ export default {
 </script>
 
 
-<style>
-
-@keyframes enter-logo {
-  from{
-    opacity: 0;
-    transform: translateX(20px);
+<style scoped>
+  .main-center {
+    margin: auto;
+    max-width: 600px;
     transition: 0.2s all;
   }
-  to{
-    opacity: 1;
-    transform: translateX(0px);
+  .wide-content-mode .main-center {
+    margin: auto;
+    max-width: 700px;
   }
-}
-._part._left{
- animation: ease-in-out 0.2s enter-logo;
-}
-.main-logo{
-  animation: 0.2s enter-logo;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  position: absolute;
-  z-index: 4;
-  margin-top: -53px;
-  font-size: 24px;
-  color: white;
-}
-.main-grid-center>._part{
-  display: block;
-}
-._part._left{
-  padding: 10px;
-  background-color: white;
-  height: max-content;
-  max-width: 300px;
-  width: 100%;
-  margin-left: auto;
-  border-radius: 8px;
-  margin-top: 8px;
-}
-.main-grid-center>main{
-  margin: inherit;
-  max-width: 600px;
-  overflow-y:auto;
-  height: calc( 100vh - 42px);
-}
-.main-grid-center{
-  display: grid;
-  grid-template-columns: 1fr 600px 1fr;
-}
-.btn-sidebar-menu i{
-  display: none !important;
-}
-@media screen and (max-width: 900px) {
-.main-grid-center > ._part{display: none !important;}
-.main-grid-center>main{
-  margin: auto;
-  max-width: 600px;
-}
-.main-grid-center{
-  display: block;
-}
-.btn-sidebar-menu i{
-  display: inline-block !important;
-}
-}
-.wide-content-mode .main-grid-center > ._part{display: none !important;}
-.wide-content-mode .main-grid-center>main{
-  margin: auto;
-  max-width: 700px;
-}
-.wide-content-mode .main-grid-center{
-  display: block;
-}
-.wide-content-mode .btn-sidebar-menu i{
-  display: inline-block !important;
-}
-
-.wide-content-mode .main-grid-center>main{
-  height: auto;
-  min-height: calc( 100vh - 42px);
-}
-
-
-
-.it-toggle{
-  margin-left: 8px;
-  margin-right: 8px;
-}
-.block .it-toggle{
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
-.main-center {
-  margin: auto;
-  max-width: 600px;
-  transition: 0.2s all;
-}
-.enter-show {
-  animation: enter-show 0.4s;
-}
-@keyframes enter-show {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.h-enter-vk {
-  display: block;
-  color: white !important;
-  height: 41px;
-}
-.header_user_info {
-  color: white;
-  padding: 4px;
-  cursor: pointer;
-}
-.p-sidebar-header {
-  padding-bottom: 0px !important;
-}
-h3.h3-title {
-  padding: 0px 0px;
-  margin: 0px;
-  margin-bottom: 10px;
-}
-header .it-drawer-body > div {
-  margin: 16px;
-}
-header i {
-  padding: 5px;
-  padding-left: 10px;
-  font-size: 32px !important;
-  width: 32px;
-  height: 32px;
-  background-size: cover;
-  cursor: pointer;
-}
-header {
-  background-color: rgb(72, 101, 156);
-  height: 42px;
-}
-.header-content {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-}
-.wide-content-mode .main-center {
-  margin: auto;
-  max-width: 700px;
-}
 </style>

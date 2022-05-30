@@ -71,6 +71,32 @@ const routes = [
     name: 'Group',
     meta: {layout: 'main'},
     component: () => import('../views/pages/Group.vue')
+  },
+
+  //Администрирование
+  {
+    path: '/admin',
+    name: 'Admin',
+    meta: {layout: 'admin'},
+    component: () => import('../admin/pages/Home.vue')
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUsers',
+    meta: {layout: 'admin'},
+    component: () => import('../admin/pages/Users.vue')
+  },
+  {
+    path: '/admin/communities',
+    name: 'AdminCommunities',
+    meta: {layout: 'admin'},
+    component: () => import('../admin/pages/Communities.vue')
+  },
+  {
+    path: '/admin/accounts',
+    name: 'AdminAccounts',
+    meta: {layout: 'admin'},
+    component: () => import('../admin/pages/Accounts.vue')
   }
 ]
 

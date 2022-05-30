@@ -15,12 +15,13 @@
 <script>
 import EmptyLayout from './views/layouts/EmptyLayout';
 import MainLayout from './views/layouts/MainLayout';
+import AdminLayout from './views/layouts/AdminLayout';
 import Block from './components/Block';
 import LoginForm from '@/components/Units/LoginForm';
 
 export default {
   components:{
-    EmptyLayout, MainLayout, Block, LoginForm
+    EmptyLayout, MainLayout, AdminLayout, Block, LoginForm
   },
   computed:{
     layout(){
