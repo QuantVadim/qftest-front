@@ -84,7 +84,7 @@ export default {
       });
     },
     toggle(ref){
-      const inp = this.$refs[ref].$el.getElementsByTagName('input')[0];
+      const inp = this.$refs[(ref.toString())][0].$el.getElementsByTagName('input')[0];
       inp.click();
     },
     CheckChoices(){

@@ -20,6 +20,7 @@ import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import OverlayPanel from 'primevue/overlaypanel';
 import ConfirmationService from 'primevue/confirmationservice';
+//import VueYandexMetrika from 'vue-yandex-metrika'  
 
 import '@/others/styles/vars.css'
 import '@/others/styles/style.css'
@@ -35,6 +36,10 @@ Vue.component('InputText', InputText)
 Vue.component('OverlayPanel', OverlayPanel)
 Vue.component('InputNumber', InputNumber)
 
+router.beforeEach((to) => {
+   document.title = to?.meta?.title || "QF Testы"; 
+});
+
 Vue.use(store)
 .use(router)
 .use(CONST)
@@ -45,4 +50,10 @@ Vue.use(store)
 .use(MessagePlugin)
 .use(api)
 .use(ConfirmationService)
+// .use(VueYandexMetrika, {
+//     id: 88942343,
+//     router: router,
+//     env: process.env.NODE_ENV
+//     // other options
+// })
 .mount('#app')

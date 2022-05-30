@@ -7,24 +7,26 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title: 'Главная',},
     component: Home
   },
   {
     path: '/user/:usr_id',
     name: 'UserID',
-    meta: {layout: 'main'},
+    title: 'Профиль',
+    meta: {layout: 'main', title: 'Профиль', },
     component: User,
   },
   {
     path: '/auth/:socnet',
     name: 'Auth',
+    meta:{title: 'Авторизация',},
     component: Auth,
   },
   {
     path: '/test/:id/editor',
     name: 'TestEditor',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title: 'Редактор теста',},
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -33,43 +35,43 @@ const routes = [
   {
     path: '/test/:id',
     name: 'TestBasic',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Тестирование'},
     component: () => import(/* webpackChunkName: "about" */ '../views/pages/TestBasic.vue')
   },
   {
     path: '/gtest/:gid',
     name: 'GroupTestBasic',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Тестирование'},
     component: () => import(/* webpackChunkName: "about" */ '../views/pages/TestBasic.vue')
   },
   {
     path: '/result/:id',
     name: 'TestResult',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Результат теста'},
     component: () => import('../views/pages/TestResult.vue')
   },
   {
     path: '/mytests',
     name: 'MyTests',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Тесты'},
     component: () => import('../views/pages/MyTests.vue')
   },
   {
     path: '/myresults',
     name: 'MyResults',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Результаты'},
     component: () => import('../views/pages/MyResults.vue')
   },
   {
     path: '/groups',
     name: 'Groups',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Группы'},
     component: () => import('../views/pages/Groups.vue')
   },
   {
     path: '/group/:id',
     name: 'Group',
-    meta: {layout: 'main'},
+    meta: {layout: 'main', title:'Группа'},
     component: () => import('../views/pages/Group.vue')
   },
 
@@ -77,25 +79,25 @@ const routes = [
   {
     path: '/admin',
     name: 'Admin',
-    meta: {layout: 'admin'},
+    meta: {layout: 'admin', title:'Admin-панель'},
     component: () => import('../admin/pages/Home.vue')
   },
   {
     path: '/admin/users',
     name: 'AdminUsers',
-    meta: {layout: 'admin'},
+    meta: {layout: 'admin', title:'Пользователи'},
     component: () => import('../admin/pages/Users.vue')
   },
   {
     path: '/admin/communities',
     name: 'AdminCommunities',
-    meta: {layout: 'admin'},
+    meta: {layout: 'admin', title:'Классы'},
     component: () => import('../admin/pages/Communities.vue')
   },
   {
     path: '/admin/accounts',
     name: 'AdminAccounts',
-    meta: {layout: 'admin'},
+    meta: {layout: 'admin', title:'Аккаунты'},
     component: () => import('../admin/pages/Accounts.vue')
   }
 ]
