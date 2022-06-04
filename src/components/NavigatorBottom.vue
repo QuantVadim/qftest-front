@@ -15,7 +15,7 @@
               <div class="_nav-btn-title">Главная</div> 
             </div>
           </router-link>
-          <router-link to="/mytests" active-class="_active"> 
+          <router-link v-if="isMentor()" to="/mytests" active-class="_active"> 
             <div class="nav-button-wrapper">
               <div class="_nav-img-wrapper">
                 <img src="/img/nb-tests.png" alt="">
@@ -49,6 +49,11 @@ export default {
   setup() {
     
   },
+  methods:{
+    isMentor(){
+      return this.$store.state?.ME.data?.user_type == 'admin' || this.$store.state?.ME.data?.user_type == 'mentor';
+    },
+  }
 }
 </script>
 
@@ -99,10 +104,9 @@ a._active .nav-button-wrapper ._nav-img-wrapper{
 }
 
 .navigator-bottom-content ._nav-btns{
-  display: grid;
-  grid-template-columns: repeat( 4 , 1fr);
-  justify-content: center;
-  justify-items: center;
+  display: flex;
+    justify-content: space-evenly;
+    justify-items: center;
 }
 
 </style>

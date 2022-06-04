@@ -2,12 +2,12 @@
   <div class="navigator">
     <it-button-group vertical>
           <it-button block @click="goRoute('/')">Главная</it-button>
-          <it-button block @click="goRoute('/mytests')">Мои тесты</it-button>
+          <it-button v-if="isMentor()" block @click="goRoute('/mytests')">Мои тесты</it-button>
           <it-button block @click="goRoute('/myresults')">Мои решения</it-button>
           <it-button block @click="goRoute('/groups')">Группы</it-button>
-          <it-button block @click="goRoute('/test/new/editor')">Создать тест</it-button>
+          <it-button v-if="isMentor()" block @click="goRoute('/test/new/editor')">Создать тест</it-button>
         </it-button-group>
-        <div v-if="$store.state?.ME.data?.user_type == 'admin' || $store.state?.ME.data?.user_type == 'mentor'">
+        <div v-if="$store.state?.ME.data?.user_type == 'admin'">
           <br>
           <it-button block @click="goRoute('/admin')">Администрирование</it-button>
         </div>
@@ -20,6 +20,9 @@ export default {
     goRoute(route) {
       this.$router.push(route);
       this.$emit('on-clicked');
+    },
+    isMentor(){
+      return this.$store.state?.ME.data?.user_type == 'admin' || this.$store.state?.ME.data?.user_type == 'mentor';
     },
   }
 }

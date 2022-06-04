@@ -119,7 +119,11 @@ export default {
     },
     Select() {
       if(this.SelectedImage != undefined){
-        this.$emit("select", this.SelectedImage);
+        let img = JSON.parse(JSON.stringify(this.SelectedImage))
+        let url = img.url;
+        url = url.slice(url.indexOf('/', 9));//убирается домен сайта из url картинки
+        img.url = url;
+        this.$emit("select", img);
         this.Close();
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="MYID">
+  <div v-if="MYID && isMentor()">
     <div v-if="test != undefined">
       <block class="test-header-wrapper">
         <div>
@@ -29,7 +29,7 @@
     </div>
     <div v-else-if="error == false" class="center-loading">
       <it-loading></it-loading><br />
-      <div>Загрузка</div>
+      <div style="color: white" >Загрузка</div>
     </div>
     <div v-else>
       <block>
@@ -77,13 +77,14 @@
       <it-alert
         type="danger"
         :title="'Нет доступа'"
-        :body="'Необходимо авторизироваться'"
+        :body="'Необходимо авторизироваться от имени администратора или учителя'"
       />
     </block>
   </div>
 </template>
 
 <script>
+import conf from '@/conf';
 import TestQuests from "../../components/TestQuests";
 //import Button from "primevue/button";
 import ImageSelector from "@/components/Menus/ImageSelector";
@@ -145,9 +146,12 @@ export default {
           );
         });
     },
+    isMentor(){
+      return this.$store.state?.ME.data?.user_type == 'admin' || this.$store.state?.ME.data?.user_type == 'mentor';
+    },
     SelectImage(img) {
       if (this.test != undefined) {
-        this.test.ico_url = img.url;
+        this.test.ico_url = conf.URL+img.url;
         this.test.ico = img.img_id;
       }
     },

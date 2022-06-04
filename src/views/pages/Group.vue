@@ -221,6 +221,8 @@
 </template>
 
 <script>
+import conf from "@/conf";
+
 import GroupUsers from "../../components/Lists/GroupUsers.vue";
 import GTestsLIst from "../../components/Lists/GTestsList.vue";
 import TestResult from "../../views/pages/TestResult.vue";
@@ -404,7 +406,7 @@ export default {
       this.axios.post(this.apiurl, obj).then((itm)=>{
         if(itm.data?.data){
           this.$success('Изображение изменено', 'Изображение группы было успешно изменено');
-          this.group.ico_url = img.url;
+          this.group.ico_url = conf.URL+img.url;
         }else{
           this.$error("Ошибка изменения изображения", itm.data?.error || "Неизветсная ошибка")
           console.log(itm.data);

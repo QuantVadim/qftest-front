@@ -7,6 +7,9 @@
       >
       <template #body>
         <div>
+        <div v-if="isMentor() && classes.length > 2">
+          <Dropdown v-model="selectedClass" :options="classes" optionLabel="name" optionValue="com_id" placeholder="Все" />
+        </div>
         <it-button
           class="btn-update"
           icon="update"
@@ -15,25 +18,23 @@
           text
           >Обновить</it-button
         >
-        <div v-for="(item, index) in items" :key="index" >
+        <div v-for="(item, index) in listResults.items" :key="index" >
           <ResultCard :data="item" @delete="toDeleteResult" :index="index" />
           <Divider />
         </div>
         <div
-          v-if="!isLoading && !isButtonLoad && items.length == 0"
+          v-if="!listResults.isLoading && !listResults.isMore && listResults.items.length == 0"
           class="center gray"
         >
           Здесь ничего нет
         </div>
-        <it-button @click="Load" :loading="isLoading" v-if="isButtonLoad" block
+        <it-button @click="Load" :loading="listResults.isLoading" v-if="listResults.isMore" block
           >Еще</it-button
         >
         </div>
       </template>
       <template #actions>
         <it-button @click="setEnable(false)">Закрыть</it-button>
-        <!-- <it-button :loading="isWaitingUserActionLoading" @click="saveUserName" type="primary"
-          >Сохранить</it-button> -->
       </template>
     </it-modal>
     <!-- /Окно просмотра результатов -->
@@ -59,11 +60,14 @@
 <script>
 import Divider from "primevue/divider";
 import ResultCard from "../Items/GResult.vue";
+import Dropdown from 'primevue/dropdown';
+
+import List from "@/others/ListManager";
 
 export default {
   components: {
     Divider,
-    ResultCard,
+    ResultCard, Dropdown
   },
   props: ['modelValue', "data"],
   data() {
@@ -79,12 +83,47 @@ export default {
       curDelResult: undefined,
       curDelResultIndex: undefined,
       isDeletingResult: false,
+
+      selectedClass: null,
+      classes:[],
+
+      listResults: null,
     };
   },
-  mounted() {
+  created(){
+    this.listResults = List.Create(null, 'get_group_results', 'res_id', 50, true);
+    this.listResults.props = 
+      [{name:'gr_id', value: this.$route.params.id}, 
+      {name: 'gt_id', value: this?.data?.gt_id}, 
+      {name:'com_id', value: this.selectedClass}];
+  },
+  beforeMount(){
     this.val = this.modelValue;
   },
+  mounted() {
+  },
   methods: {
+    async LoadClasses(){
+      let obj = {
+        me: this.$store.state?.ME.data,
+        q: 'get_classes_groups',
+        gr_id: this.data.gr_id,
+      }
+      this.classes = [{name: 'Все', com_id: null}];
+      this.axios.post(this.API, obj).then((itm)=>{
+        console.log(itm.data);
+        if(itm.data?.data){
+          this.classes.splice(this.classes.length, 0, ...itm.data?.data);
+        }else{
+          this.$error('Ошибка запроса групп', 'Ошибка' || this.data?.error);
+        }
+      }).catch(()=>{
+        this.$error('Ошибка запроса групп', 'Ошибка сети');
+      })
+    },
+    isMentor(){
+      return this.$store.state?.ME.data?.user_type == 'admin' || this.$store.state?.ME.data?.user_type == 'mentor';
+    },
     toDeleteResult(data, index) {
       this.curDelResult = data;
       this.curDelResultIndex = index;
@@ -122,44 +161,29 @@ export default {
       this.$emit("set-enable", enable);
     },
     updateList() {
-      this.items = [];
-      this.Load();
+      this.listResults.props = 
+        [{name:'gr_id', value: this.$route.params.id}, 
+        {name: 'gt_id', value: this?.data?.gt_id}, 
+        {name:'com_id', value: this.selectedClass}];
+      this.LoadClasses();
+      this.listResults.Refresh();
     },
     async Load() {
-      if (this.isLoading) return false;
-      this.isLoading = true;
-      let obj = {
-        q: "get_group_results",
-        me: this.$store.state.ME.data,
-        gr_id: this.$route.params.id,
-        desc: true,
-        count: 30,
-      };
-      if (this.data?.gt_id) {
-        obj.gt_id = this.data.gt_id;
-      }
-      if (this.items.length > 0)
-        obj.point = this.items[this.items.length - 1].res_id;
-      this.axios.post(this.apiurl, obj).then((itm) => {
-        console.log(itm.data);
-        if (itm.data?.data) {
-          if (itm.data.data.length > 0) {
-            let leng = itm.data?.data.length;
-            for (let i = 0; i < leng; i++) {
-              this.items.push(itm.data?.data[i]);
-            }
-            if (leng < obj.count) this.isButtonLoad = false;
-          } else {
-            this.isButtonLoad = false;
-          }
-          this.$emit("cash", this.items);
-          console.log(this.items);
-        }
-        this.isLoading = false;
-      });
+      this.listResults.props = 
+        [{name:'gr_id', value: this.$route.params.id}, 
+        {name: 'gt_id', value: this?.data?.gt_id}, 
+        {name:'com_id', value: this.selectedClass}];
+      this.listResults.Load();
     },
   },
   watch: {
+    selectedClass(){
+      this.listResults.props =
+        [{name:'gr_id', value: this.$route.params.id}, 
+        {name: 'gt_id', value: this?.data?.gt_id}, 
+        {name:'com_id', value: this.selectedClass}];
+      this.listResults.Refresh();
+    },
     modelValue(val){
       this.val = val;
     },

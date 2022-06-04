@@ -12,6 +12,7 @@ export default{
       info: undefined,
       isDesc: desc,
       findText: null,
+      props: [],
       async Load() {
         if (this.isLoading) return false;
         this.isLoading = true;
@@ -22,6 +23,10 @@ export default{
           count,
           findText: this.findText || null,
         };
+        for (let i = 0; i < this.props.length; i++) {
+          const el = this.props[i];
+          obj[el.name] = el?.value;
+        }
         if(this.info) obj.info = this.info;
         if (this.items.length > 0)
         obj.point = this.items[this.items.length - 1][colName];

@@ -106,7 +106,7 @@
     </div>
     <div v-if="test == undefined && info == undefined" class="center-loading">
       <it-loading></it-loading><br />
-      <div>Загрузка</div>
+      <div style="color: white">Загрузка</div>
     </div>
   </div>
   <div v-else>

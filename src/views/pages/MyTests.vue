@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isMentor()">
     <it-modal v-model="isShareWindow">
       <template #body>
         <div class="sidebar-conent-center">
@@ -51,6 +51,15 @@
     </it-modal>
     <!--END Окно удаления Теста -->
   </div>
+  <div v-else>
+    <block>
+      <it-alert
+        type="danger"
+        :title="'Нет доступа'"
+        :body="'Необходимо авторизироваться от имени администратора или учителя'"
+      />
+    </block>
+  </div>
 </template>
 
 <script>
@@ -79,6 +88,9 @@ export default {
     };
   },
   methods: {
+    isMentor(){
+      return this.$store.state?.ME.data?.user_type == 'admin' || this.$store.state?.ME.data?.user_type == 'mentor';
+    },
     onDeleteTest(data, index) {
       this.CurTestData = data;
       this.CurTestIndex = index;

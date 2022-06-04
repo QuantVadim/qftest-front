@@ -67,8 +67,8 @@
                   </div>
                   <div class="choice-image-wrapper" @click.stop="setEditingMode(dt.choices[index].id)">
                     
-                  <div class="choice-image _back" :style="'background-image: url(\''+dt.choices[index]?.image?.url+'\')'"></div>
-                  <div class="choice-image _front" :style="'background-image: url(\''+dt.choices[index]?.image?.url+'\')'">
+                  <div class="choice-image _back" :style="'background-image: url(\''+GetImageURL(dt.choices[index])+'\')'"></div>
+                  <div class="choice-image _front" :style="'background-image: url(\''+GetImageURL(dt.choices[index])+'\')'">
                     
                   </div>
                   
@@ -136,6 +136,8 @@
 </template>
 
 <script>
+import conf from '@/conf';
+
 import draggable from "vuedraggable";
 import Dropdown from 'primevue/dropdown';
 import OverlayPanel from 'primevue/overlaypanel';
@@ -322,6 +324,16 @@ export default {
           return i;   
         }
       }
+    },
+    GetImageURL(choice){
+      let ret = choice?.image?.url;
+      if(ret){
+        if(ret.indexOf('http') == 0){
+          ret = ret.slice(ret.indexOf('/', 9));//убирается домен сайта из url картинки
+        }
+        ret = conf.URL + ret;
+      } 
+      return ret;
     }
   },
 };

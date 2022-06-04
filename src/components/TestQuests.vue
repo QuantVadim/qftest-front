@@ -371,7 +371,7 @@ export default {
         if(handleCard.classList.contains('handle-card') == false){
           handleCard = handleCard.querySelector('.handle-card');
         }
-        if(handleCard.classList.contains('handle-card')){
+        if(handleCard?.classList.contains('handle-card')){
           if(this.SelectMode.mode != "move"){
             let cardID = handleCard.getAttribute('card-id').toString();
             cardID = cardID.indexOf('.') >= 0 ? Number(cardID) : cardID; 
@@ -643,7 +643,7 @@ export default {
 
 .select-panel{
   width: 100%;
-  z-index: 1;
+  z-index: 5;
   position: fixed;
   top: 0;
   left: 0;

@@ -1,9 +1,10 @@
 import { createStore } from 'vuex'
 
 import ME from './modules/me'
+import conf from '@/conf'
 
 const CONSTANS = {
-  api: 'http://t.myqf.ru/backend/api/main.php',
+  api: conf.API,
 }
 
 export default createStore({

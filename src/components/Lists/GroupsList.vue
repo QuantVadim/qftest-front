@@ -9,12 +9,12 @@
       </div>
     </div>
   </div>
-  <div v-for="(item, index) in items" :key="index">
+  <div v-for="(item, index) in listGroups.items" :key="index">
     <GroupCard :data="item" />
     <Divider />
   </div>
-  <div v-if="!isLoading && !isButtonLoad && items.length == 0" class="center gray">Здесь ничего нет</div>
-  <it-button @click="Load" :loading="isLoading" v-if="isButtonLoad" block
+  <div v-if="!listGroups.isLoading && !listGroups.isMore && listGroups.items.length == 0" class="center gray">Здесь ничего нет</div>
+  <it-button @click="listGroups.Load()" :loading="listGroups.isLoading" v-if="listGroups.isMore" block
         >Еще</it-button>
   </div>
 </template>
@@ -29,57 +29,36 @@ export default {
   components:{
     Divider, GroupCard
   },
-  props: ['tab'],
+  props: ['tab', 'com'],
   data() {
     return {
-      items: [],
-      isLoading: false,
-      isButtonLoad: true,
 
       listRecomended: null,
+      listGroups: null,
     };
   },
   created(){
         this.listRecomended = List.Create(null, 'get_my_groups_default', 'gr_id', 50, true, ()=>{
             console.log('Loaded');
         });
-    },
+        this.listGroups = List.Create(null, 'get_my_groups', 'gr_id', 50, true, ()=>{
+            console.log('Loaded');
+        });
+        this.listGroups.props = [{name: 'com_id', value: this.com}, {name:'type', value: this.tab == "Управляемые"? 'my' : 'in'}];
+  },
+  watch:{
+    com(){
+      this.listGroups.props = [{name: 'com_id', value: this.com}, {name:'type', value: this.tab == "Управляемые"? 'my' : 'in'}];
+      this.listGroups.Refresh();
+    }
+  },
   methods:{
-    async Load() {
-      if (this.isLoading) return false;
-      this.isLoading = true;
-      let obj = {
-        q: "get_my_groups",
-        me: this.$store.state.ME.data,
-        type: this.tab == "Управляемые"? 'my' : 'in',
-        desc: true,
-        count: 30,
-      };
-      if (this.items.length > 0)
-        obj.point = this.items[this.items.length - 1].gr_id;
 
-      this.axios.post(this.apiurl, obj).then((itm) => {
-        if (itm.data?.data) {
-          if (itm.data.data.length > 0) {
-            let leng = itm.data?.data.length;
-            for (let i = 0; i < leng; i++) {
-              this.items.push(itm.data?.data[i]);
-            }
-            if (leng < obj.count) this.isButtonLoad = false;
-          } else {
-            this.isButtonLoad = false;
-          }
-        }
-        this.isLoading = false;
-      });
-    },
   },
   mounted(){
     this.listRecomended.Load();
+    this.listGroups.Load();
 
-    setTimeout(() => {
-      this.Load();
-    }, 0);
   }
 }
 </script>

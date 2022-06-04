@@ -27,8 +27,8 @@
               <div class="wrapper-choice" v-else :class="{ not_marked: getType(item) == 'warning' }" :type="getType(item)">
                 <span class="choice-body" :class="{'_selected': dt.choices[index]?.selected || dt?.answer == dt.choices[index].id }">
                   <div class="choice-image-wrapper">
-                    <div class="choice-image _back" :style="'background-image: url(\''+dt.choices[index]?.image?.url+'\')'"></div>
-                    <div class="choice-image _front" :style="'background-image: url(\''+dt.choices[index]?.image?.url+'\')'"></div>
+                    <div class="choice-image _back" :style="'background-image: url(\''+GetImageURL(dt.choices[index])+'\')'"></div>
+                    <div class="choice-image _front" :style="'background-image: url(\''+GetImageURL(dt.choices[index])+'\')'"></div>
                   </div>
                   <div class="choice-image-panel _bottom">
                     <it-checkbox v-if="dt.isMultiple" v-model="dt.choices[index].selected" :class="{ not_marked: getType(item) == 'warning' }" :type="getType(item)"> </it-checkbox>
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import conf from '@/conf';
+
 export default {
   props: ["data"],
   data() {
@@ -118,6 +120,16 @@ export default {
       }
       return ret;
     },
+    GetImageURL(choice){
+      let ret = choice?.image?.url;
+      if(ret){
+        if(ret.indexOf('http') == 0){
+          ret = ret.slice(ret.indexOf('/', 9));//убирается домен сайта из url картинки
+        }
+        ret = conf.URL + ret;
+      } 
+      return ret;
+    }
   },
 };
 </script>

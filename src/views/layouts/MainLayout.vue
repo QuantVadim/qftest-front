@@ -21,7 +21,7 @@
   </header>
   <div class="main-grid-center">
     <div class="_part _left">
-      <div class="main-logo"><img src="/vimg/logo.png" height="30" alt=""><span>QF Тесты</span></div>
+      <div class="main-logo"><img src="/img/logo1.png" height="30" alt=""><span>МБОУ "СОШ №1"</span></div>
       <div><Navigat /></div>
     </div>
     <main class="main">

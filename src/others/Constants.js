@@ -1,3 +1,3 @@
 export default Object({
-  API: 'http://t.myqf.ru/backend/api/main.php',
+  API: 'http://test-s1.ru/backend/api/main.php',
 })

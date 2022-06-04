@@ -64,7 +64,7 @@
     </div>
     <div v-else class="center-loading">
       <it-loading></it-loading><br />
-      <div>Загрузка</div>
+      <div style="color: white">Загрузка</div>
     </div>
   </div>
   <div v-else>
