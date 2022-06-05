@@ -24,7 +24,7 @@
       </div>
       <div class="card-result-body_grade">
         <ResultScore :data='data' />
-        <div class="result-card-score">{{ data.score+"/"+data.max_score }}</div>
+        <div v-if="data?.ready == 1" class="result-card-score">{{ data.score+"/"+data.max_score }}</div>
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@
       <it-avatar :size="'50px'" :src="data?.avatar" />
       <div class="itm-gresult-center">
         <div class="card-autor-name">
-          <span v-if="data?.ready == 0 && data?.date_created">{{ getNormalDate(data?.date_created) }}</span>
+          <span v-if="data?.ready == 0 && data?.date_created">{{ data?.date_created }}</span>
           <span v-else>{{ getNormalDate(data?.time_end) }}</span>
         </div>
         <h3 class="card-test-title"><span @click="goResult">{{ user_name }}</span></h3>

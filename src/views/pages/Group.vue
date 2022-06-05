@@ -147,18 +147,6 @@
           <ConfirmDialog></ConfirmDialog>
         </block>
     </div>
-    <Sidebar
-      v-model:visible="isOpenResult"
-      position="bottom"
-      class="win-result"
-    >
-      <div class="sidebar-conent-center">
-        <TestResult
-          :key="$route.query?.result"
-          :set-res-id="$route.query?.result"
-        />
-      </div>
-    </Sidebar>
     <!-- Выбор изображения: -->
     <it-modal v-model="isImageSelector">
       <template #header>
@@ -225,8 +213,6 @@ import conf from "@/conf";
 
 import GroupUsers from "../../components/Lists/GroupUsers.vue";
 import GTestsLIst from "../../components/Lists/GTestsList.vue";
-import TestResult from "../../views/pages/TestResult.vue";
-import Sidebar from "primevue/sidebar";
 import ImageSelector from "@/components/Menus/ImageSelector";
 
 import Accordion from 'primevue/accordion';
@@ -241,7 +227,7 @@ import {Assessments} from "@/DataLib" //Каталог шкал оцениван
 
 export default {
   components: {
-    GroupUsers, GTestsLIst, TestResult, Sidebar, ImageSelector, Accordion, AccordionTab, ConfirmDialog, Dropdown,
+    GroupUsers, GTestsLIst, ImageSelector, Accordion, AccordionTab, ConfirmDialog, Dropdown,
     AssessmentProps
   },
   data() {
@@ -263,7 +249,6 @@ export default {
       group: undefined,
       editGroupData: {name: '', description: ''},
       result_id: null,
-      isOpenResult: false,
 
       selectedAssessment: undefined,
       assessments: undefined,
@@ -319,13 +304,6 @@ export default {
           this.selectedAssessment = this.assessments[0];
         }
       }
-    },
-    winResult(){
-      this.isOpenResult = this.$route.query?.result ? true : false;
-      console.log('ss', this.isOpenResult );
-    },
-    isOpenResult(){
-      if(this.isOpenResult == false) this.$router.push({query: {}});
     },
     isWindowEditDescription(val){
       if(val){
@@ -507,11 +485,6 @@ export default {
           },
           reject: () => {}
       });
-    },
-    OpenResult(res_id){
-      console.log(res_id);
-      this.result_id = res_id;
-      this.isOpenResult = true;
     },
     toCashTests(items){
       this.cashTests = items;

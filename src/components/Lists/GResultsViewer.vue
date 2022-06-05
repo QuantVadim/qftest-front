@@ -93,7 +93,7 @@ export default {
   created(){
     this.listResults = List.Create(null, 'get_group_results', 'res_id', 50, true);
     this.listResults.props = 
-      [{name:'gr_id', value: this.$route.params.id}, 
+      [{name:'gr_id', value: this.$route.params.id || this?.data?.gr_id}, 
       {name: 'gt_id', value: this?.data?.gt_id}, 
       {name:'com_id', value: this.selectedClass}];
   },
@@ -162,7 +162,7 @@ export default {
     },
     updateList() {
       this.listResults.props = 
-        [{name:'gr_id', value: this.$route.params.id}, 
+        [{name:'gr_id', value: this.$route.params.id || this?.data?.gr_id}, 
         {name: 'gt_id', value: this?.data?.gt_id}, 
         {name:'com_id', value: this.selectedClass}];
       this.LoadClasses();
@@ -170,7 +170,7 @@ export default {
     },
     async Load() {
       this.listResults.props = 
-        [{name:'gr_id', value: this.$route.params.id}, 
+        [{name:'gr_id', value: this.$route.params.id || this?.data?.gr_id}, 
         {name: 'gt_id', value: this?.data?.gt_id}, 
         {name:'com_id', value: this.selectedClass}];
       this.listResults.Load();
@@ -179,7 +179,7 @@ export default {
   watch: {
     selectedClass(){
       this.listResults.props =
-        [{name:'gr_id', value: this.$route.params.id}, 
+        [{name:'gr_id', value: this.$route.params.id || this?.data?.gr_id}, 
         {name: 'gt_id', value: this?.data?.gt_id}, 
         {name:'com_id', value: this.selectedClass}];
       this.listResults.Refresh();

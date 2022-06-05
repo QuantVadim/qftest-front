@@ -23,7 +23,10 @@
     <div class="item-gtest-body" @click="goTest">
       <div v-if="data?.name">
         <div class="itm-gtest-header">
-         <it-avatar square  size="45px" :src="data?.ico_url || data?.test_ico_url"  :text="data.name" />
+          <span :title="'Мои решения: '+data?.my_results+ ' шт.'">
+            <span class="ico-done" v-if="data?.my_results > 0"><it-icon name="check_circle" color="#9AED9A" /></span>
+            <it-avatar square  size="45px" :src="data?.ico_url || data?.test_ico_url" :text="data.name" />
+          </span>
          <h3 class="card-test-title">
           <span>{{ data.name }}</span>
           </h3>
@@ -177,4 +180,15 @@ h3 {
   max-height: 300px;
   overflow-y: auto;
 }
+
+.ico-done i{
+  color: rgb(154, 237, 154);
+  position: absolute;
+  margin-left: -56px;
+  margin-top: 33px;
+  z-index: 1;
+  background-color: white;
+  border-radius: 100%;
+}
+
 </style>

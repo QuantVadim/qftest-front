@@ -12,7 +12,7 @@
       >Обновить</it-button
     >
     <div v-for="(item, index) in items" :key="index">
-      <GTest :data="item" />
+      <GTest :data="item" @show-results="showResults" />
       <Divider />
     </div>
     <div
@@ -24,19 +24,26 @@
     <it-button @click="Load" :loading="isLoading" v-if="isButtonLoad" block
       >Еще</it-button>
     </block>
-    
+
+    <GResultsViewer
+      v-model="isWinResults"
+      :data="curDataResults"
+      @set-enable="WinShowResults"
+    />
   </div>
 </template>
 
 <script>
 import GTest from "../../components/Items/GTest.vue";
 import Divider from "primevue/divider";
+import GResultsViewer from "@/components/Lists/GResultsViewer.vue";
 
 export default {
   name: 'Home',
   components: {
     GTest,
     Divider,
+    GResultsViewer,
   },
   props: ["data"],
   data() {
@@ -44,6 +51,9 @@ export default {
       items: [],
       isLoading: false,
       isButtonLoad: true,
+
+      isWinResults: false,
+      curDataResults: null,
     };
   },
   activated(){
@@ -61,8 +71,22 @@ export default {
       }, 0);
     }
   },
+  beforeRouteLeave(to, from, next) {
+    if(this.isWinResults){
+      this.isWinResults = false;
+      next(false);
+      return;
+    }
+    next(true)
+  },
   methods: {
-
+    WinShowResults(show) {
+      this.isWinResults = show;
+    },
+    showResults(data) {
+      this.isWinResults = true;
+      this.curDataResults = data;
+    },
     updateList() {
       this.isButtonLoad = true;
       this.items = [];

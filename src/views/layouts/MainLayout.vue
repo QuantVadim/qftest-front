@@ -67,6 +67,7 @@
         <!-- <it-button :loading="isDeletingGTest" @click="DeleteGTest" type="danger">Удалить</it-button> -->
       </template>
     </it-modal>
+    <ResultModule/>
 </template>
 
 <script>
@@ -76,6 +77,7 @@ import Navigat from "../../components/Navigat.vue";
 import Sidebar from "primevue/sidebar";
 import conf from "@/conf.js";
 import {provide, reactive } from '@vue/runtime-core';
+import ResultModule from '@/components/Modules/Result'
 
 export default {
   components: {
@@ -83,6 +85,7 @@ export default {
     Navigat,
     NavigatorBottom,
     ImageSelectorGlob,
+    ResultModule
   },
   setup(){
     const ImageSelector = reactive({
