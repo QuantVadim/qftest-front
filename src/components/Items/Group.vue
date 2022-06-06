@@ -22,6 +22,7 @@ export default {
   methods:{
     goGroup(){
       this.$router.push(`/group/${this.data.gr_id}`);
+      this.$emit('on-select', this.data.gr_id);
     }
   }
 }

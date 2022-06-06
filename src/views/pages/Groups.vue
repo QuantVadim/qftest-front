@@ -14,6 +14,13 @@
             v-model="newGroup.description"
             placeholder="Описание группы"
           />
+          <div style="margin-top: 10px">
+            <it-checkbox
+                :type="'primary'"
+                :label="'Закрытая группа'"
+                v-model="isPrivateGroup"
+              />
+          </div>
         </template>
         <template #actions>
           <it-button @click="isWindowCreateGroup = false">Отмена</it-button>
@@ -34,11 +41,15 @@
           <it-button :loading="isJoinLoading" @click="JoinGroup" type="primary">Вступить</it-button>
         </template>
       </it-modal>
+      <GroupsFinder v-model="isGroupsFinder" />
       <!-- /Вступление в группу -->
     <block>
       <h3>Группы:</h3>
-      <it-button icon="add" v-if="isMentor()" @click="isWindowCreateGroup = true">Создать группу</it-button>
-      <it-button icon="login" v-else @click="isWindowJoinGroup = true">Вступить в группу</it-button>
+      <it-button-group>
+        <it-button icon="add" v-if="isMentor()" @click="isWindowCreateGroup = true">Создать</it-button>
+        <it-button icon="login" v-else @click="isWindowJoinGroup = true">Вступить</it-button>
+        <it-button icon="search" @click="isGroupsFinder = true">Поиск</it-button>
+      </it-button-group>
       <br>
       <!--<it-toggle v-model="tabGroup" :options="['В составе', 'Управляемые']" />  -->
         
@@ -56,10 +67,11 @@
 <script>
 import GroupsList from "../../components/Lists/GroupsList.vue";
 import Dropdown from 'primevue/dropdown';
+import GroupsFinder from '@/components/Menus/GroupsFinder.vue';
 
 export default {
   components: {
-    GroupsList, Dropdown
+    GroupsList, Dropdown, GroupsFinder
   },
   data() {
     return {
@@ -68,11 +80,14 @@ export default {
       isWindowCreateGroup: false,
       isWindowJoinGroup: false,
       isJoinLoading: false,
+      isPrivateGroup: false,
       joinCode: "",
       newGroup: {
         name: "",
         description: "",
       },
+
+      isGroupsFinder: false,
 
       selectedClass: null,
       classes:[]
@@ -116,6 +131,7 @@ export default {
           me: this.$store.state.ME.data,
           name: this.newGroup.name,
           description: this.newGroup.description,
+          private: this.isPrivateGroup,
         };
         this.axios.post(this.apiurl, obj).then((itm) => {
           console.log(itm.data);

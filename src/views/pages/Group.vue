@@ -8,8 +8,13 @@
       />
       <div v-if="tab == 'Группа'">
         <block style="margin-top: 60px">
-          <div style="color: gray; margin-left: 6px">
-            {{ group.count_users }} ч.
+          <div style="color: gray; margin-left: 6px; display: flex; justify-content: space-between;">
+            <span>
+              {{ group.count_users }} ч.
+            </span>
+            <span style="height: 10px">
+              <it-button v-if="group?.req_id != undefined && group?.mem_id == undefined" text @click="isModalExitGroup = true">Выйти</it-button>
+            </span>
           </div>
           <div class="group-header-image-wrapper">
             <div class="group-image-wrapper-center">
@@ -66,6 +71,15 @@
               <div v-if="isJoinGroup && group.join_key.length > 1">
                 <it-input prefix="Код" v-model="join_code" readonly />
                 <it-input prefix="Ссылка" v-model="join_link" readonly />
+              </div>
+              <div style="margin-top: 10px">
+                <it-checkbox
+                @click="SwitchPrivateGroup"
+                :disabled="isWaitPrivateGroup"
+                :type="'primary'"
+                :label="'Закрытая группа'"
+                v-model="isPrivateGroup"
+              />
               </div>
             </AccordionTab>
             <AccordionTab header="Оценивание">
@@ -160,6 +174,20 @@
         <!-- <it-button :loading="isDeletingGTest" @click="DeleteGTest" type="danger">Удалить</it-button> -->
       </template>
     </it-modal>
+    <!-- Выход из группы: -->
+    <it-modal v-model="isModalExitGroup">
+      <template #header>
+        <h3 style="margin: 0px">Выход из группы</h3>
+      </template>
+      <template #body>
+        <div style="text-align: center">Вы уверены, что хотите покинуть группу?</div>
+      </template>
+      <template #actions>
+        <it-button @click="isModalExitGroup = false">Отмена</it-button>
+        <it-button @click="ExitGroup" type="danger" :loading="isExitingGroup">Выйти</it-button>
+        <!-- <it-button :loading="isDeletingGTest" @click="DeleteGTest" type="danger">Удалить</it-button> -->
+      </template>
+    </it-modal>
     <!-- Изменение названия и описания группы: -->
     <it-modal v-model="isWindowEditDescription">
       <template #header>
@@ -198,13 +226,43 @@
     </it-modal>
   </div>
   <div v-else>
-    <block>
-      <it-alert
+      <div v-if='group'>
+        <block style="margin-top: 60px">
+          <div style="color: gray; margin-left: 6px">
+            {{ group.count_users }} ч.
+          </div>
+          <div class="group-header-image-wrapper">
+            <div class="group-image-wrapper-center">
+              <it-avatar
+                title="Изображение группы"
+                class="test-ico-full"
+                size="120px"
+                :src="group?.ico_url"
+                :text="group.name"
+              />
+            </div>
+          </div>
+          <div>
+            <h3 style="margin: 8px 0px; text-align: center">
+              {{ group.name }}
+            </h3>
+            <div style="display: flex; justify-content: center">
+              <p-button v-if="group?.accepted == 0" label="Отозвать заявку" :disabled="isDeletingRequest" @click="DeleteRequest" />
+              <p-button v-else label="Вступить" :disabled="isJoinLoading" @click="JoinGroup" />
+            </div>
+            <pre v-if="group.description">{{ group.description }}</pre>
+          </div>
+        </block>
+      </div>
+      <div v-else>
+        <block>
+        <it-alert
         type="danger"
         :title="'Отказано в доступе'"
         :body="'Группа не существует или вы не состоите в ней'"
-      />
-    </block>
+        />
+        </block>
+      </div>
   </div>
 </template>
 
@@ -250,8 +308,18 @@ export default {
       editGroupData: {name: '', description: ''},
       result_id: null,
 
+      isPrivateGroup: true,
+      isWaitPrivateGroup: false,
+
       selectedAssessment: undefined,
       assessments: undefined,
+
+      isJoinLoading: false,
+
+      isModalExitGroup: false,
+      isExitingGroup: false,
+
+      isDeletingRequest: false,
 
       ScrollY: 0,
     };
@@ -331,6 +399,58 @@ export default {
     this.assessments = JSON.parse(JSON.stringify(Assessments));
   },
   methods: {
+    DeleteRequest(){
+      if(this.isDeletingRequest) return;
+      this.isDeletingRequest = true;
+      let obj = {
+        q: "group_request_delete",
+        me: this.$store.state.ME.data,
+        gr_id: this.group.gr_id,
+      };
+      this.axios.post(this.apiurl, obj).then((itm) => {
+        this.isDeletingRequest = false;
+        if (itm.data?.data) {
+          if(itm.data?.data == 'ok'){
+            this.GroupLoad();
+          }
+        }
+      });
+    },
+    ExitGroup(){
+      if(this.isExitingGroup) return;
+      this.isExitingGroup = true;
+      let obj = {
+        q: "group_request_delete",
+        me: this.$store.state.ME.data,
+        gr_id: this.group.gr_id,
+      };
+      this.axios.post(this.apiurl, obj).then((itm) => {
+        this.isExitingGroup = false;
+        if (itm.data?.data) {
+          if(itm.data?.data == 'ok'){
+            this.GroupLoad();
+            this.isModalExitGroup = false;
+          }
+        }
+      });
+    },
+    JoinGroup() {
+      if(this.isJoinLoading) return;
+      this.isJoinLoading = true;
+      let obj = {
+        q: "join_group",
+        me: this.$store.state.ME.data,
+        gr_id: this.group.gr_id,
+      };
+      this.axios.post(this.apiurl, obj).then((itm) => {
+        this.isJoinLoading = false;
+        if (itm.data?.data) {
+          if(itm.data?.data == 'ok'){
+            this.GroupLoad();
+          }
+        }
+      });
+    },
     getAccepted(tabName){
       let ret = undefined;
       switch (tabName) {
@@ -504,7 +624,7 @@ export default {
         this.isWaitJoinGroup = true;
         this.group.join_key = "";
         let obj = {
-          q: "switch_joining_grop",
+          q: "switch_joining_group",
           me: this.$store.state.ME.data,
           gr_id: this.$route.params.id,
           is_joining: this.isJoinGroup,
@@ -519,6 +639,23 @@ export default {
         });
       }, 0);
     },
+    SwitchPrivateGroup() {
+      setTimeout(() => {
+        this.isWaitPrivateGroup = true;
+        let obj = {
+          q: "switch_private_group",
+          me: this.$store.state.ME.data,
+          gr_id: this.$route.params.id,
+          isPrivate: this.isPrivateGroup,
+        };
+        this.axios.post(this.apiurl, obj).then((itm) => {
+          if (itm.data?.data) {
+            this.isPrivateGroup = itm.data?.private;
+          }
+          this.isWaitPrivateGroup = false;
+        });
+      }, 0);
+    },
     GroupLoad() {
       let obj = {
         q: "get_group_info",
@@ -526,12 +663,17 @@ export default {
         gr_id: this.$route.params.id,
       };
       this.axios.post(this.apiurl, obj).then((itm) => {
-        console.log(itm.data);
+        this.error = false;
         if (itm.data?.data) {
+          if(itm.data?.error){
+            this.error = itm.data?.error;
+          }
           this.group = itm.data.data;
           this.isJoinGroup = itm.data.data.join_key.length > 5;
+          this.isPrivateGroup = itm.data.data.private == 1;
         } else if (itm.data?.error) {
           this.error = itm.data?.error;
+          this.group = undefined;
         }
       });
     },
