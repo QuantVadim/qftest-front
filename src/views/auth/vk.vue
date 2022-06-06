@@ -13,7 +13,15 @@
         <div style="font-size: 14px; margin-top: 6px">Укажите логин и пароль от стандартной учетной записи</div><br>
         <it-input prefix="Логин" v-model="login" @keyup.enter="goToPasswordInput"/>
         <it-input prefix="Пароль" ref="password" type="password" v-model="password" @keyup.enter="isWinBinding = true" />
-        <it-button block :type="'primary'" style='height: 41px;' @click="isWinBinding = true">Привязать</it-button>
+        <div style="text-align: left; color: gray; margin: 10px 0px;">
+                <div>
+                    <it-checkbox type="primary" v-model="checkbox1"> <span>Я принимаю <a target="_blank" href="/">политику обработки персональных данных</a>.</span></it-checkbox>
+                </div> 
+                <div>
+                  <it-checkbox type="primary" v-model="checkbox2"><span>Я принимаю <a target="_blank" href="/">пользовательское соглашение</a>.</span></it-checkbox>
+                </div>
+        </div>
+        <it-button block :type="'primary'" style='height: 41px;' :disabled="(checkbox1 && checkbox2) == false " @click="isWinBinding = true">Привязать</it-button>
          <it-divider/>
         <it-button block :type="'primary'" @click="CancelBinding" outlined>Назад</it-button>
     </div>
@@ -53,6 +61,8 @@ export default{
             user: null,
             isWinBinding: false,
             isBinding: false,
+            checkbox1: false,
+            checkbox2: false,
         }
     },
 mounted(){

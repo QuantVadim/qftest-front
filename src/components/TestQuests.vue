@@ -643,7 +643,7 @@ export default {
 
 .select-panel{
   width: 100%;
-  z-index: 5;
+  z-index: 8;
   position: fixed;
   top: 0;
   left: 0;

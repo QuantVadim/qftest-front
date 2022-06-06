@@ -11,6 +11,15 @@
           <br>
           <it-button block @click="goRoute('/admin')">Администрирование</it-button>
         </div>
+        <footer class='footer'>
+          <div>
+            Продолжая пользоваться сайтом, вы принимаете
+            <a target="_blank" href="/">пользовательское соглашение</a> и 
+            <a target="_blank" href="/">политику обработки персональных данных</a>.
+          </div>
+          <div style="margin-top: 6px">МБОУ "СОШ №1"© 2022</div>
+        </footer>
+        
   </div>
 </template>
 
@@ -34,5 +43,14 @@ export default {
     height: 20px !important;
     font-size: 14px !important;
     line-height: 24px !important;
+}
+footer.footer{
+  text-align: center;
+  color: gray;
+  font-size: 11px;
+  margin-top: 20px;
+}
+footer.footer a{
+  color: gray;
 }
 </style>

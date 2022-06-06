@@ -5,10 +5,11 @@
             <div v-if="assessment?.name == 'procent'" class="grade-view _procent" style="height: 46px;">
                 <Knob v-model="score" :min="0" :max="100" :size="50" :valueTemplate="score+'%'" readonly />
             </div>
-            <!-- 5-бальная шкала -->
+            <!-- 5-бальная система -->
             <div v-else-if="assessment?.name == 'point5'" class="grade-view _point5">
                 <div :class="'_point5_'+getPoint5()">{{ getPoint5() }}</div>
             </div>
+            <!-- 3-звездочная система -->
             <div v-else-if="assessment?.name == 'star3'" class="grade-view _star3">
                 <span class="star-view" style="font-size: 18px;">
                     <span :class="'star3_'+getPoint5()"></span>
@@ -16,7 +17,7 @@
             </div>
         </div>
         <div v-else>
-            <span><div class="pencil-writing" style=" padding: 10px"></div></span>
+            <span title="Тестирование не закончено"><div class="pencil-writing" style=" padding: 10px"></div></span>
         </div>
     </div>
 </template>
@@ -37,6 +38,15 @@ export default {
     },
     renderTracked(){
         this.score =  Math.floor((+this.data.score/+this.data.max_score)*100);
+    },
+    watch:{
+        data(){
+            if(this?.data != undefined && this?.data?.assessment?.length > 0){
+            this.assessment = JSON.parse(this?.data?.assessment);
+        }else if(this?.data?.assessment?.length == 0 || this?.data?.assessment?.length == null){
+            this.assessment = JSON.parse(JSON.stringify(this.Assessments[0]));
+        }
+        }
     },
     methods:{
         getPoint5(){//Пятибальная шкала: получение оценки
@@ -60,7 +70,7 @@ export default {
         }else if(this?.data?.assessment?.length == 0 || this?.data?.assessment?.length == null){
             this.assessment = JSON.parse(JSON.stringify(this.Assessments[0]));
         }
-    }
+    },
 }
 </script>
 

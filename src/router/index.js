@@ -99,6 +99,12 @@ const routes = [
     name: 'AdminAccounts',
     meta: {layout: 'admin', title:'Аккаунты'},
     component: () => import('../admin/pages/Accounts.vue')
+  },
+  {
+    path: '/admin/groups',
+    name: 'AdminGroups',
+    meta: {layout: 'admin', title:'Группы'},
+    component: () => import('../admin/pages/Groups.vue')
   }
 ]
 

@@ -69,6 +69,7 @@
     <UserEditor :active='UserEditor.active' :data='UserEditor.data' @close="CloseEditor('UserEditor')" />
     <AccountEditor :active='AccountEditor.active' :data='AccountEditor.data' @close="CloseEditor('AccountEditor')" />
     <CommunityEditor :active='CommunityEditor.active' :data='CommunityEditor.data' @close="CloseEditor('CommunityEditor')" />
+    <GroupEditor :active='GroupEditor.active' :data='GroupEditor.data' @close="CloseEditor('GroupEditor')" />
   </div>
 </template>
 
@@ -79,11 +80,12 @@ import NavigatBar from "@/admin/units/NavigatBarAdmin";
 import UserEditor from '@/admin/components/UserEditor.vue';
 import AccountEditor from '@/admin/components/AccountEditor.vue';
 import CommunityEditor from '@/admin/components/CommunityEditor.vue';
+import GroupEditor from '@/admin/components/GroupEditor.vue';
 
 export default {
     components: {
         NavigatBar,
-        UserEditor, AccountEditor, CommunityEditor
+        UserEditor, AccountEditor, CommunityEditor, GroupEditor
     },
     provide(){
         return{
@@ -120,11 +122,22 @@ export default {
                 case 'onDeleted': this.CommunityEditor.active = false; break;
             }
         });
+        EventBus.$on('GroupEditor', itm=>{
+            console.log(itm);
+            switch (itm?.name) {
+                case 'open': this.GroupEditor.data = itm?.data;
+                    this.GroupEditor.active = true; break;
+                case 'onSave': this.GroupEditor.active = false; break;
+                case 'onCreated': this.GroupEditor.active = false; break;
+                case 'onDeleted': this.GroupEditor.active = false; break;
+            }
+        });
     },
     unmounted(){
         EventBus.$off('UserEditor');
         EventBus.$off('AccountEditor');
         EventBus.$off('CommunityEditor');
+        EventBus.$off('GroupEditor');
     },
     data(){
         return{
@@ -132,6 +145,7 @@ export default {
             UserEditor: { active: false, data: null},
             AccountEditor: {active: false, data: null},
             CommunityEditor: {active: false, data: null},
+            GroupEditor: {active: false, data: null},
         }
     },
     computed:{

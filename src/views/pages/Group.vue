@@ -70,14 +70,14 @@
               />
               <div v-if="isJoinGroup && group.join_key.length > 1">
                 <it-input prefix="Код" v-model="join_code" readonly />
-                <it-input prefix="Ссылка" v-model="join_link" readonly />
+                <!-- <it-input prefix="Ссылка" v-model="join_link" readonly /> -->
               </div>
               <div style="margin-top: 10px">
                 <it-checkbox
                 @click="SwitchPrivateGroup"
                 :disabled="isWaitPrivateGroup"
                 :type="'primary'"
-                :label="'Закрытая группа'"
+                :label="'Приватная группа'"
                 v-model="isPrivateGroup"
               />
               </div>

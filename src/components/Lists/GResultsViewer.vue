@@ -142,12 +142,13 @@ export default {
         this.isWinDelResult = false;
         console.log(itm.data);
         if (itm.data?.data){
+          
           this.$Notification.success({
             title: "Решение удалено",
             text: `Решение было успешно удалено`,
             placement: 'bottom-right',
           });
-          this.items.splice(this.curDelResultIndex, 1);
+          this.listResults.DeleteBy('res_id', obj.res_id);
         }else if(itm.data?.error){
           this.$Notification.danger({
             title: "Ошибка удаления",

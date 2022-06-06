@@ -17,7 +17,7 @@
           <div style="margin-top: 10px">
             <it-checkbox
                 :type="'primary'"
-                :label="'Закрытая группа'"
+                :label="'Приватная группа'"
                 v-model="isPrivateGroup"
               />
           </div>

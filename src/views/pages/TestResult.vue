@@ -17,7 +17,7 @@
             <div class="user-item-row">
             <it-avatar :src="test?.autor_test.avatar" />
             <div class="user-name">
-              <h3>{{ test?.autor_test.first_name+' '+test?.autor_test.last_name }}</h3>
+              <h3>{{ test?.autor_test.last_name+' '+test?.autor_test.first_name }}</h3>
             </div>
             </div>
           </div>
@@ -28,7 +28,7 @@
           <div class="user-item-row">
           <it-avatar :src="test?.user.avatar" size="30px" />
           <div class="user-name">
-            <span>{{ test?.user.first_name+' '+test?.user.last_name }}</span>
+            <span>{{ test?.user.last_name+' '+test?.user.first_name }}</span>
           </div>
         </div>
         </div>
@@ -47,7 +47,13 @@
           </div>
         </div>
         
-        <div>Баллы: {{ test.score }} из {{ test.max_score }}</div>
+        <div class="result-grade-block" style="margin: 10px">
+          <span v-if="test != undefined">
+            <ResultScore :data="test" />
+          </span>
+          <span v-if="test?.ready == 1" style="color: gray">{{ test.score }} из {{ test.max_score }}</span>
+        </div>
+        
 
         <it-toggle
           v-if="test?.chronology?.length > 0"
@@ -81,11 +87,12 @@
 <script>
 import TestQuests from "../../components/TestQuests";
 import ChronologyView from "@/components/ChronologyView";
+import ResultScore from "@/components/Parts/ResultScore.vue";
 
 export default {
   props: ["set-res-id"],
   components: {
-    TestQuests, ChronologyView,
+    TestQuests, ChronologyView, ResultScore
   },
   computed: {
     MYID() {
@@ -172,5 +179,12 @@ textarea.it-textarea {
   box-shadow: 0px 0px 3px 3px rgb(226, 226, 226);
   border-radius: 8px;
   border: 1px rgb(209, 209, 209) solid;
+}
+.result-grade-block{
+  display: flex;
+    column-gap: 10px;
+    align-items: center;
+    flex-direction: row-reverse;
+    max-height: 20px;
 }
 </style>

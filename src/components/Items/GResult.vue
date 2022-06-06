@@ -74,7 +74,7 @@ export default {
       if(this.data?.user_name){
         return this.data?.user_name;
       }else
-      return this.data?.first_name+' '+this.data?.last_name;
+      return this.data?.last_name+' '+this.data?.first_name;
       
     },
   },

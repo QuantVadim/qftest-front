@@ -4,6 +4,7 @@
         <router-link to="/admin/users">Пользователи</router-link>
         <router-link to="/admin/accounts">Аккаунты</router-link>
         <router-link to="/admin/communities">Классы</router-link>
+        <router-link to="/admin/groups">Группы</router-link>
     </div>
 </template>
 
@@ -25,7 +26,7 @@ export default {
     color: white;
     font-size: 18px;
     text-decoration: none;
-    padding: 4px;
+    padding: 10px 4px;
 }
 .links a:hover{
     background-color: rgba(0, 0, 0, 0.1);

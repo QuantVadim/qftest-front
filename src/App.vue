@@ -5,6 +5,9 @@
     <div class="center"><it-loading/></div>
   </div>
   <div v-else>
+    <div class='login-logo'>
+      МБОУ "СОШ №1": Тестирование
+    </div>
     <block class="center window-login">
       <LoginForm />
     </block>
@@ -113,5 +116,12 @@ body{
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.login-logo{
+    color: white;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 20px;
 }
 </style>
