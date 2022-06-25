@@ -5,12 +5,34 @@
     <div class="center"><it-loading/></div>
   </div>
   <div v-else>
-    <div class='login-logo'>
-      МБОУ "СОШ №1": Тестирование
+    <div class='login-body'>
+      <div class='login-logo'>
+        МБОУ "СОШ №1": Тестирование
+      </div>
+      <block class="center window-login">
+        <LoginForm />
+      </block>
     </div>
-    <block class="center window-login">
-      <LoginForm />
-    </block>
+    <footer class="site-footer">
+      <div>
+        <div>Адрес:</div>
+        352360, Краснодарский край, Тбилисский район, станица Тбилисская, улица Первомайская, 40</div>
+      <div style="text-align:center">
+        <div>
+            <a target="_blank" href="/docs/?q=about">Основные сведения</a><br>
+            <a target="_blank" href="/docs/?q=terms">Пользовательское соглашение</a> и 
+            <a target="_blank" href="/docs/?q=privacy">политика обработки персональных данных</a>.
+          </div>
+          <div style="margin-top: 6px">МБОУ "СОШ №1"© 2022</div>
+      </div>
+      <div style="text-align:right">
+        <div>Контакты:</div>
+        <a href="tel:+78615832883">8(86158)3-28-83</a><br>
+        <a href="mailto:school1@tbl.kubannet.ru">school1@tbl.kubannet.ru</a>
+        <div>Техническая поддержка:</div>
+        <a href="mailto:vkuralin@vk.com">vkuralin@vk.com</a>
+      </div>
+    </footer>
   </div>
 </div>
 </template>
@@ -55,6 +77,23 @@ export default {
 @import '~primeicons/primeicons.css';
 @import '~primevue/resources/primevue.min.css';
 @import '~primevue/resources/themes/saga-blue/theme.css';
+
+.login-body{
+  height: 100vh;
+}
+footer.site-footer{
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr minmax(100px, 400px) 1fr;
+  color: gray;
+  justify-content: space-between;
+  font-size: 12px;
+}
+footer.site-footer a{
+  color: gray;
+}
+
 
 *{
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);

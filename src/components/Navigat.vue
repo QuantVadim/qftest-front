@@ -14,8 +14,9 @@
         <footer class='footer'>
           <div>
             Продолжая пользоваться сайтом, вы принимаете
-            <a target="_blank" href="/">пользовательское соглашение</a> и 
-            <a target="_blank" href="/">политику обработки персональных данных</a>.
+            <a target="_blank" href="/docs/?q=terms">пользовательское соглашение</a> и 
+            <a target="_blank" href="/docs/?q=privacy">политику обработки персональных данных</a>.<br>
+            <a target="_blank" href="/docs/?q=about">Основные сведения</a>
           </div>
           <div style="margin-top: 6px">МБОУ "СОШ №1"© 2022</div>
         </footer>

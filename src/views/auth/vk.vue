@@ -15,10 +15,10 @@
         <it-input prefix="Пароль" ref="password" type="password" v-model="password" @keyup.enter="isWinBinding = true" />
         <div style="text-align: left; color: gray; margin: 10px 0px;">
                 <div>
-                    <it-checkbox type="primary" v-model="checkbox1"> <span>Я принимаю <a target="_blank" href="/">политику обработки персональных данных</a>.</span></it-checkbox>
+                    <it-checkbox type="primary" v-model="checkbox1"> <span>Я принимаю <a target="_blank" href="/docs/?q=privacy">политику обработки персональных данных</a>.</span></it-checkbox>
                 </div> 
                 <div>
-                  <it-checkbox type="primary" v-model="checkbox2"><span>Я принимаю <a target="_blank" href="/">пользовательское соглашение</a>.</span></it-checkbox>
+                  <it-checkbox type="primary" v-model="checkbox2"><span>Я принимаю <a target="_blank" href="/docs/?q=terms">пользовательское соглашение</a>.</span></it-checkbox>
                 </div>
         </div>
         <it-button block :type="'primary'" style='height: 41px;' :disabled="(checkbox1 && checkbox2) == false " @click="isWinBinding = true">Привязать</it-button>

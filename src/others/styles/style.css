@@ -47,6 +47,15 @@ body{
  .btn-sidebar-menu i{
    display: none !important;
  }
+ @media screen and (max-width: 600px) {
+ footer.site-footer{
+    grid-template-columns: 1fr;
+ }
+ footer.site-footer>div{
+  margin-bottom: 10px;
+  text-align: center !important;
+}
+}
  @media screen and (max-width: 1000px) {
   .main-grid-center > ._part{display: none !important;}
   .main-grid-center>main{
