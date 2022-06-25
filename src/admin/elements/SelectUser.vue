@@ -55,7 +55,7 @@ import List from '@/others/ListManager';
 
 export default {
     components:{},
-    props: ['item'],
+    props: ['item', 'types'],
     data(){
         return{
             isModalItems: false,
@@ -74,8 +74,9 @@ export default {
     },
     created(){
         this.AddItems.list = List.Create(null, 'adm_get_users', 'usr_id', 50, this.AddItems.isDesc, ()=>{
-            console.log('Loaded');
+            console.log('Created');
         });
+        this.AddItems.list.props.push({name: 'types', value: 'admin,mentor'});
     },
     mounted(){
 
